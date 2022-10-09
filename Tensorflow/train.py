@@ -1,4 +1,4 @@
-from tensorflow.python.keras.preprocessing.image import ImageDataGenerator
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from models import load_model
 from hp import load_hps
 from tensorflow.keras import metrics, optimizers
@@ -7,16 +7,14 @@ from datasets.dataset import Dataset
 from plotting import plot
 import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
-from adabelief_tf import AdaBeliefOptimizer
-from CosineDecayRestarts import CosineDecayRestarts
 import tensorflow as tf
 # from numba import cuda 
 
 
-gpus = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(gpus[0], True)
-tf.keras.backend.clear_session()
-# device = cuda.get_current_device()
+# gpus = tf.config.experimental.list_physical_devices('GPU')
+# tf.config.experimental.set_memory_growth(gpus[0], True)
+# tf.keras.backend.clear_session()
+# # device = cuda.get_current_device()
 # device.reset()
 
 def model_evaluation(model, test_gen):
@@ -50,7 +48,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=AdaBeliefOptimizer(learning_rate=hps['learning_rate'], decay=1e-6),
+                  optimizer=tfa.optimizers.AdaBelief(learning_rate=hps['learning_rate'], decay=1e-6),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
@@ -69,7 +67,7 @@ def train():
         restore_best_weights=False,
     )
     
-    cosine_decay_restarts = CosineDecayRestarts(hps['learning_rate'], 1000)
+    cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 1000)
 
     tensorboard_callback = TensorBoard(log_dir="./logs")
 
@@ -78,7 +76,7 @@ def train():
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
 
-    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, cosine_decay_restarts]
+    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
 
     if hps['framework'] == 'tensorflow':
         train_ds, val_ds, test_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
