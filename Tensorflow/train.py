@@ -100,7 +100,7 @@ def train():
                                                           batch_size=hps['batch_size'], class_mode='categorical')
         model_evaluation(model, test_generator)
     elif hps['framework'] == 'keras':
-        train_generator, validation_generator = Dataset.keras_preprocess(
+        train_generator, validation_generator, test_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
             img_size=hps['img_size'],
             batch_size=hps['batch_size'],
