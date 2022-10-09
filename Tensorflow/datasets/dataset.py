@@ -90,6 +90,7 @@ class Dataset:
                 rescale=1. / 255,
                 zoom_range=0.2,
                 horizontal_flip=True,
+                width_shift_range=0.2,
                 rotation_range=0.3,
                 validation_split=0.3)
         else:
@@ -103,7 +104,7 @@ class Dataset:
             dataset_dir + "train/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
-            # color_mode='grayscale',
+            color_mode='grayscale',
             class_mode='categorical',
             subset='training')
 
@@ -111,12 +112,12 @@ class Dataset:
             dataset_dir + "train/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
-            # color_mode='grayscale',
+            color_mode='grayscale',
             class_mode='categorical',
             shuffle=True,
             subset='validation')
 
-        # test_generator = test_datagen.flow_from_directory(dataset_dir + "test/", target_size=(img_size, img_size),
-        #                                                   batch_size=batch_size, class_mode='categorical')
+        test_generator = test_datagen.flow_from_directory(dataset_dir + "test/", target_size=(img_size, img_size),
+                                                          batch_size=batch_size, color_mode='grayscale', class_mode='categorical')
 
-        return train_generator, validation_generator
+        return train_generator, validation_generator, test_generator
