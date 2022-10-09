@@ -31,7 +31,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=64,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
                    learning_rate=0.0001,
                    lr_reducer_factor=0.2,
                    lr_reducer_patience=8, img_size=48, framework='keras')
@@ -68,8 +68,8 @@ def train():
         baseline=None,
         restore_best_weights=False,
     )
-
-    # cosine_decay_restarts = CosineDecayRestarts(hps['learning_rate'], first_decay_steps)
+    
+    cosine_decay_restarts = CosineDecayRestarts(hps['learning_rate'], 1000)
 
     tensorboard_callback = TensorBoard(log_dir="./logs")
 
@@ -78,7 +78,7 @@ def train():
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
 
-    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
+    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, cosine_decay_restarts]
 
     if hps['framework'] == 'tensorflow':
         train_ds, val_ds, test_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
