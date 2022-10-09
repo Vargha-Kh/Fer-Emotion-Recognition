@@ -1,10 +1,12 @@
 from .resnet50 import Resnet50
 from .InceptionResNetV2 import InceptionResnetV2
 from .custom_model import CustomClassifier
+from .regnetx002 import RegNetX002
 
 MODELS = dict(resnet50=Resnet50,
               inception_resnetv2=InceptionResnetV2,
-              custom_model=CustomClassifier
+              custom_model=CustomClassifier,
+              regnetx002=RegNetX002
               # other models
               )
 
