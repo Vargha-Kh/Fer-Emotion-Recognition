@@ -41,10 +41,10 @@ class PatchEncoder(layers.Layer):
 
 class Transformers:
     def __init__(self, img_size=48, channels=1, **kwargs):
+        self.patch_size = 2
         self.input_shape = (img_size, img_size, channels)
         self.num_classes = 8
-        patch_size = 2  # Size of the patches to be extract from the input images
-        self.num_patches = (img_size // patch_size) ** 2
+        self.num_patches = (img_size // self.patch_size) ** 2
         self.projection_dim = 64
         self.num_heads = 4
         self.transformer_units = [
