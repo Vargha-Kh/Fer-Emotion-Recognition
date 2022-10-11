@@ -10,10 +10,9 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 import tensorflow as tf
 # from numba import cuda 
 
-
-# gpus = tf.config.experimental.list_physical_devices('GPU')
-# tf.config.experimental.set_memory_growth(gpus[0], True)
-# tf.keras.backend.clear_session()
+devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(devices[0], True)
+tf.keras.backend.clear_session()
 # # device = cuda.get_current_device()
 # device.reset()
 
@@ -29,10 +28,10 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
-                   learning_rate=0.0001,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='transformers', n_epochs=300, batch_size=64,
+                   learning_rate=0.001,
                    lr_reducer_factor=0.2,
-                   lr_reducer_patience=8, img_size=48, framework='keras')
+                   lr_reducer_patience=8, img_size=48, split_size=.025, framework='keras')
     model = load_model(model_name=hps['model_name'])
 
     METRICS = [
@@ -48,7 +47,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdaBelief(learning_rate=hps['learning_rate'], decay=1e-6),
+                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=0.0001),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
@@ -102,7 +101,7 @@ def train():
             dataset_dir=hps['dataset_dir'],
             img_size=hps['img_size'],
             batch_size=hps['batch_size'],
-            augment=True, split_size=0.3)
+            augment=True, split_size=hps['split_size'])
         history = model.fit(
             train_generator,
             steps_per_epoch=train_generator.samples // hps['batch_size'],
