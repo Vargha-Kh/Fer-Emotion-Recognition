@@ -9,6 +9,13 @@ class Patches(layers.Layer):
     def __init__(self, patch_size):
         super(Patches, self).__init__()
         self.patch_size = patch_size
+    
+    def get_config(self):
+        config = super(Patches, self).get_config()
+        config.update({
+            "patch_size": self.patch_size
+        })
+        return config
 
     def call(self, images):
         batch_size = tf.shape(images)[0]
@@ -32,6 +39,13 @@ class PatchEncoder(layers.Layer):
         self.position_embedding = layers.Embedding(
             input_dim=num_patches, output_dim=projection_dim
         )
+    def get_config(self, num_patches, projection_dim):
+        config = super(PatchEncoder, self).get_config()
+        config.update({
+            "num_patches": self.num_patches,
+            "projection": self.projection,
+            "position_embedding": self.position_embedding})
+        return config
 
     def call(self, patch):
         positions = tf.range(start=0, limit=self.num_patches, delta=1)
@@ -53,6 +67,25 @@ class Transformers:
         ]  # Size of the transformer layers
         self.transformer_layers = 8
         self.mlp_head_units = [2048, 1024]
+
+    # def get_config(self, img_size=48, channels=1, **kwargs):
+    #     config = super(__init__, self).get_config()
+    #     config.update({
+    #         "patch_size": self.patch_size,
+    #         "input_shape": (img_size, img_size, channels),
+    #         "num_classes": self.num_classes,
+    #         "num_patches": (img_size // self.patch_size) ** 2,
+    #         "projection_dim": self.projection_dim = 64,
+    #         "num_heads": self.num_heads = 4,
+    #         "transformer_units": self.transformer_units = [
+    #           self.projection_dim * 2,
+    #           self.projection_dim,
+    #         ],
+    #         "transformers": self.transformer_layers,
+    #         "mlp_head_units": self.mlp_head_units = [2048, 1024]
+    #     })
+
+
 
     def mlp(self, x, hidden_units, dropout_rate):
         for units in hidden_units:
@@ -89,9 +122,9 @@ class Transformers:
         # Create a [batch_size, projection_dim] tensor.
         representation = layers.LayerNormalization(epsilon=1e-6)(encoded_patches)
         representation = layers.Flatten()(representation)
-        representation = layers.Dropout(0.5)(representation)
+        representation = layers.Dropout(0.75)(representation)
         # Add MLP.
-        features = self.mlp(representation, hidden_units=self.mlp_head_units, dropout_rate=0.5)
+        features = self.mlp(representation, hidden_units=self.mlp_head_units, dropout_rate=0.75)
         # Classify outputs.
         logits = layers.Dense(self.num_classes)(features)
         # Create the Keras model.
