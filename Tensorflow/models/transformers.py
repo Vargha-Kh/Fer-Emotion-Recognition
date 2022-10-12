@@ -24,7 +24,7 @@ class Patches(layers.Layer):
             sizes=[1, self.patch_size, self.patch_size, 1],
             strides=[1, self.patch_size, self.patch_size, 1],
             rates=[1, 1, 1, 1],
-            padding="VALID",
+            padding="SAME",
         )
         patch_dims = patches.shape[-1]
         patches = tf.reshape(patches, [batch_size, -1, patch_dims])
@@ -39,7 +39,7 @@ class PatchEncoder(layers.Layer):
         self.position_embedding = layers.Embedding(
             input_dim=num_patches, output_dim=projection_dim
         )
-    def get_config(self, num_patches, projection_dim):
+    def get_config(self):
         config = super(PatchEncoder, self).get_config()
         config.update({
             "num_patches": self.num_patches,
@@ -55,18 +55,18 @@ class PatchEncoder(layers.Layer):
 
 class Transformers:
     def __init__(self, img_size=48, channels=1, **kwargs):
-        self.patch_size = 2
+        self.patch_size = 1
         self.input_shape = (img_size, img_size, channels)
         self.num_classes = 8
         self.num_patches = (img_size // self.patch_size) ** 2
-        self.projection_dim = 64
+        self.projection_dim = 16
         self.num_heads = 4
         self.transformer_units = [
             self.projection_dim * 2,
             self.projection_dim,
         ]  # Size of the transformer layers
-        self.transformer_layers = 8
-        self.mlp_head_units = [2048, 1024]
+        self.transformer_layers = 4
+        self.mlp_head_units = [1021, 512]
 
     # def get_config(self, img_size=48, channels=1, **kwargs):
     #     config = super(__init__, self).get_config()
@@ -108,14 +108,14 @@ class Transformers:
             x1 = layers.LayerNormalization(epsilon=1e-6)(encoded_patches)
             # Create a multi-head attention layer.
             attention_output = layers.MultiHeadAttention(
-                num_heads=self.num_heads, key_dim=self.projection_dim, dropout=0.1
+                num_heads=self.num_heads, key_dim=self.projection_dim, dropout=0.75
             )(x1, x1)
             # Skip connection 1.
             x2 = layers.Add()([attention_output, encoded_patches])
             # Layer normalization 2.
             x3 = layers.LayerNormalization(epsilon=1e-6)(x2)
             # MLP.
-            x3 = self.mlp(x3, hidden_units=self.transformer_units, dropout_rate=0.1)
+            x3 = self.mlp(x3, hidden_units=self.transformer_units, dropout_rate=0.75)
             # Skip connection 2.
             encoded_patches = layers.Add()([x3, x2])
 
