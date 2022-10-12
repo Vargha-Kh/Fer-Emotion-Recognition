@@ -55,7 +55,7 @@ class PatchEncoder(layers.Layer):
 
 class Transformers:
     def __init__(self, img_size=48, channels=1, **kwargs):
-        self.patch_size = 1
+        self.patch_size = 2
         self.input_shape = (img_size, img_size, channels)
         self.num_classes = 8
         self.num_patches = (img_size // self.patch_size) ** 2
@@ -66,7 +66,7 @@ class Transformers:
             self.projection_dim,
         ]  # Size of the transformer layers
         self.transformer_layers = 4
-        self.mlp_head_units = [1021, 512]
+        self.mlp_head_units = [512, 256]
 
     # def get_config(self, img_size=48, channels=1, **kwargs):
     #     config = super(__init__, self).get_config()
@@ -75,14 +75,11 @@ class Transformers:
     #         "input_shape": (img_size, img_size, channels),
     #         "num_classes": self.num_classes,
     #         "num_patches": (img_size // self.patch_size) ** 2,
-    #         "projection_dim": self.projection_dim = 64,
-    #         "num_heads": self.num_heads = 4,
-    #         "transformer_units": self.transformer_units = [
-    #           self.projection_dim * 2,
-    #           self.projection_dim,
-    #         ],
+    #         "projection_dim": self.projection_dim,
+    #         "num_heads": self.num_heads,
+    #         "transformer_units": self.transformer_units,
     #         "transformers": self.transformer_layers,
-    #         "mlp_head_units": self.mlp_head_units = [2048, 1024]
+    #         "mlp_head_units": self.mlp_head_units
     #     })
 
 
