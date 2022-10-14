@@ -12,8 +12,8 @@ def get_dataset(directory="./fer2013", batch_size=256, img_size=48):
          transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])])
 
-    train_data = datasets.ImageFolder(dataset_dir + '/train', transform=train_transforms)
-    val_data = datasets.ImageFolder(dataset_dir + '/val', transform=test_transforms)
+    train_data = datasets.ImageFolder(directory + '/train', transform=transform)
+    val_data = datasets.ImageFolder(directory + '/val', transform=transform)
 
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
