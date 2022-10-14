@@ -3,20 +3,19 @@ from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 
 
-def get_dataset(directory="./datasets", batch_size=64, img_size=224):
+def get_dataset(directory="./fer2013", batch_size=256, img_size=48):
     transform = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
+        transforms.RandomAffine(5, shear=0.2),
+        transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
-         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+         transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                    std=[0.229, 0.224, 0.225])])
 
-    train_set = datasets.FER2013(root=directory, train=True,
-                                 download=True, transform=transform)
-    train_loader = torch.utils.data.DataLoader(train_set, batch_size=batch_size,
-                                               shuffle=True)
+    train_data = datasets.ImageFolder(dataset_dir + '/train', transform=train_transforms)
+    val_data = datasets.ImageFolder(dataset_dir + '/val', transform=test_transforms)
 
-    test_set = datasets.FER2013(root=directory, train=False,
-                                download=True, transform=transform)
-    test_loader = torch.utils.data.DataLoader(test_set, batch_size=batch_size,
-                                              shuffle=False)
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
+    val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
+    return train_loader, val_loader, 
 
-    return train_loader, test_loader
