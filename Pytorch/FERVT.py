@@ -2,8 +2,7 @@ import torch.nn.functional as F
 import torch.nn as nn
 import torch
 import torchvision
-
-from model.transformer import Transformer
+from transformers import Transformer
 
 
 # backbone + token_embedding + position_embedding
