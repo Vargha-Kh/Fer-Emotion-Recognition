@@ -19,7 +19,7 @@ class Trainer:
             optimizer.zero_grad()
             X = x.to(device)
             Y = y_true.to(device)
-            logit, probe = model(X)
+            logit = model(X)
             loss = criterion(logit, Y)
             loss_ += loss.item() * x.size(0)
             Max, num = torch.max(logit, 1)
@@ -40,7 +40,7 @@ class Trainer:
         for x, y_true in ds_valid:
             X = x.to(device)
             Y = y_true.to(device)
-            logit, probe = model(X)
+            logit = model(X)
             loss = criterion(logit, Y)
             loss_ += loss.item() * x.size(0)
             Max, num = torch.max(logit, 1)
