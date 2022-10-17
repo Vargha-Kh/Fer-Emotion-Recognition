@@ -7,7 +7,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=224):
     transform = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
         transforms.RandomAffine(0.2),
-         transforms.RandomRotate(0.1),
+         transforms.RandomRotation(0.1),
         transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
          transforms.Normalize(mean=[0.485, 0.456, 0.406],
