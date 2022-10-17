@@ -5,7 +5,7 @@ import torchvision
 from transformers import Transformer
 
 
-# backbone + token_embedding + position_embedding
+# backbone
 class Backbone(nn.Module):
     @staticmethod
     def weight_init(m):
@@ -84,7 +84,7 @@ class Backbone(nn.Module):
         return x
 
 
-#  refer to SubSection 3.3
+
 # input: img(batchsize,c,h,w)--->output: img_feature_map(batchsize,c,h,w)
 # in FER+ (b,3,48,48)
 class GWA(nn.Module):
@@ -106,12 +106,10 @@ class GWA(nn.Module):
         self.bn1 = nn.BatchNorm2d(64)
         self.conv2 = nn.Conv2d(64, 3, 1)
         self.bn2 = nn.BatchNorm2d(3)
-        # 图像分割，每块16x16，用一个卷积层实现
         self.patch_embeddings = nn.Conv2d(in_channels=3,
                                           out_channels=9408,
                                           kernel_size=(56, 56),
                                           stride=(56, 56))
-        # 使用自适应pool压缩一维
         self.aap = nn.AdaptiveAvgPool2d((1, 1))
 
         self.apply(self.weight_init)
@@ -157,13 +155,10 @@ class GWA_Fusion(nn.Module):
 
     def __init__(self):
         super(GWA_Fusion, self).__init__()
-        # 原图特征转换网络
         self.convt1 = nn.Conv2d(3, 3, (3, 3), 1, 1)
         self.bnt1 = nn.BatchNorm2d(3)
-        # map特征转换网络
         self.convt2 = nn.Conv2d(3, 3, (3, 3), 1, 1)
         self.bnt2 = nn.BatchNorm2d(3)
-        # RFN参与特征融合网络
         self.convrfn1 = nn.Conv2d(3,3,(3,3),1,1)
         self.bnrfn1 = nn.BatchNorm2d(3)
         self.prelu1 = nn.PReLU(3)
@@ -172,7 +167,6 @@ class GWA_Fusion(nn.Module):
         self.prelu2 = nn.PReLU(3)
         self.convrfn3 = nn.Conv2d(3, 3, (3, 3), 1, 1)
         self.sigmod = nn.Sigmoid()
-
         self.apply(self.weight_init)
 
     def forward(self, img, map):
@@ -189,8 +183,8 @@ class VTA(nn.Module):
     def __init__(self):
         super(VTA, self).__init__()
 
-        self.transformer = Transformer(num_layers=12, dim=192, num_heads=8,
-                                       ff_dim=768, dropout=0.1)
+        self.transformer = Transformer(num_layers=10, dim=192, num_heads=8,
+                                       ff_dim=768, dropout=0.5)
         self.layernorm = nn.LayerNorm(192)
         self.fc = nn.Linear(192, 8)
 
