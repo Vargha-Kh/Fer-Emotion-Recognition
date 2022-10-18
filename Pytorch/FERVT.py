@@ -21,7 +21,7 @@ class Backbone(nn.Module):
     def __init__(self):
         super(Backbone, self).__init__()
 
-        resnet = torchvision.models.resnet34(pretrained=True)
+        resnet = torchvision.models.resnet18(pretrained=True)
         self.conv1 = resnet.conv1
         self.bn1 = resnet.bn1
         self.relu = resnet.relu
@@ -41,7 +41,7 @@ class Backbone(nn.Module):
         self.bntran3 = nn.BatchNorm2d(3)
         # Visual Token Embedding.
         self.layernorm = nn.LayerNorm(192)
-        self.dropout = nn.Dropout(0.2)
+        self.dropout = nn.Dropout(0.5)
         self.line = nn.Linear(192, 192)
         # class token init
         self.class_token = nn.Parameter(torch.zeros(1, 192))
