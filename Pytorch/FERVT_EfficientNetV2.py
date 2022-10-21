@@ -32,10 +32,10 @@ class Backbone(nn.Module):
         self.apply(self.weight_init)
         self.num_features = None
         model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
-        self.conv1 = model_ft.Conv2dNormActivation
-        self.bn1 = model_ft.BatchNorm2d
-        self.relu = model_ft.SiLU(inplace=True)
-        self.maxpool = model_ft.AdaptiveAvgPool2d(output_size=1)
+        self.conv1 = model_ft.model_ft.layers[-1]
+        # self.bn1 = model_ft.BatchNorm2d
+        # self.relu = model_ft.SiLU(inplace=True)
+        # self.maxpool = model_ft.AdaptiveAvgPool2d(output_size=1)
         self.layer1 = model_ft.layer1
         self.layer2 = model_ft.layer2
         self.layer3 = model_ft.layer3
