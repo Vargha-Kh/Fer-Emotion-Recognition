@@ -31,76 +31,19 @@ class Backbone(nn.Module):
         self.fine_tune = fine_tune
         self.apply(self.weight_init)
         self.num_features = None
-        model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
-        self.conv1 = model_ft.layers[-1]
-        print(model_ft.layers)
-        # self.bn1 = model_ft.BatchNorm2d
-        # self.relu = model_ft.SiLU(inplace=True)
-        # self.maxpool = model_ft.AdaptiveAvgPool2d(output_size=1)
-        self.layer1 = model_ft.layer1
-        self.layer2 = model_ft.layer2
-        self.layer3 = model_ft.layer3
-        self.layer4 = model_ft.layer4
-        print(model_ft.classifier)
-        print(model_ft.features)
-        #  feature resize networks
-        # shape trans 128
-        self.convtran1 = nn.Conv2d(128, 3, 21, 1)
-        self.bntran1 = nn.BatchNorm2d(3)
-        self.convtran2 = nn.Conv2d(256, 3, 7, 1)
-        self.bntran2 = nn.BatchNorm2d(3)
-        self.convtran3 = nn.Conv2d(512, 3, 2, 1, 1)
-        self.bntran3 = nn.BatchNorm2d(3)
-        # Visual Token Embedding.
-        self.layernorm = nn.LayerNorm(192)
-        self.dropout = nn.Dropout(0.5)
-        self.line = nn.Linear(192, 192)
-        # class token init
-        self.class_token = nn.Parameter(torch.zeros(1, 192))
-        # position embedding
-        self.pos_embedding = nn.Parameter(torch.zeros(4, 192))
+        self.model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
 
-    def forward(self, x):
+    def forward(self, model_ft):
+        self.model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
+        set_parameter_requires_grad(model=model_ft, feature_extracting=False)
+        # self.num_features = model_ft.AuxLogits.fc.in_features
+        # model_ft.AuxLogits.fc = nn.Linear(self.num_features, self.num_classes)
         for name, child in self.model_ft.named_children():
             print(name)
-        self.num_features = self.model_ft.features
-        print(self.num_features)
+        self.num_features = self.model_ft.fc.in_features
         print('layers list')
         print(list(self.model_ft.children())[:-1])
-        # x = x + self.pos_embedding.expand(batchsize, 4, 192)
-        # self.model_ft.fc = nn.Linear(self.num_features, 7)
-
-        batchsize = x.shape[0]
-        x = self.relu(self.bn1(self.conv1(x)))
-        x = self.maxpool(x)
-        x = self.layer1(x)
-
-        x = self.layer2(x)
-
-        # L1  feature transformation from the pyramid features
-        l1 = F.leaky_relu(self.bntran1(self.convtran1(x)))
-        # L1 reshape to (1 x c h w)
-        l1 = l1.view(batchsize,1,-1)
-        # L1 token_embedding to T1    L1(1xCHW)--->T1(1xD)
-        # in this model D=128
-        l1 = self.line(self.dropout(F.relu(self.layernorm(l1))))
-
-        x = self.layer3(x)
-        l2 = F.leaky_relu(self.bntran2(self.convtran2(x)))
-        l2 = l2.view(batchsize,1,-1)
-        l2 = self.line(self.dropout(F.relu(self.layernorm(l2))))
-
-        x = self.layer4(x)
-        l3 = F.leaky_relu(self.bntran3(self.convtran3(x)))
-        l3 = l3.view(batchsize,1,-1)
-        l3 = self.line(self.dropout(F.relu(self.layernorm(l3))))
-
-        x = torch.cat((l1, l2), dim=1)
-        x = torch.cat((x, l3), dim=1)
-        x = torch.cat((self.class_token.expand(batchsize, 1, 192), x), dim=1)
-        x = x + self.pos_embedding.expand(batchsize, 4, 192)
-
-
+        self.model_ft.fc = nn.Linear(self.num_features, 7)
         return self.model_ft
 
 
