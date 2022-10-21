@@ -41,6 +41,8 @@ class Backbone(nn.Module):
         for name, child in model_ft.named_children():
             print(name)
         self.num_features = model_ft.fc.in_features
+        print('layers list')
+        print(list(model_ft.children())[:-1])
         model_ft.fc = nn.Linear(self.num_features, 7)
         return model_ft
 
