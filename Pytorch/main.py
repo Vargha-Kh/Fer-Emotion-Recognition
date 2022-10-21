@@ -9,9 +9,9 @@ from adan_pytorch import Adan
 from adabelief_pytorch import AdaBelief
 import os
 
-device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
-os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
-torch.cuda.empty_cache()
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+# os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
+# torch.cuda.empty_cache()
 
 if __name__ == "__main__":
     num_classes = 7
