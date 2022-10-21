@@ -40,10 +40,12 @@ class Backbone(nn.Module):
         # model_ft.AuxLogits.fc = nn.Linear(self.num_features, self.num_classes)
         for name, child in self.model_ft.named_children():
             print(name)
-        # self.num_features = self.model_ft.features
+        self.num_features = self.model_ft.features
+        print(self.num_features)
         print('layers list')
         print(list(self.model_ft.children())[:-1])
-        self.model_ft.fc = nn.Linear(self.num_features, 7)
+        # x = x + self.pos_embedding.expand(batchsize, 4, 192)
+        # self.model_ft.fc = nn.Linear(self.num_features, 7)
         return self.model_ft
 
 
