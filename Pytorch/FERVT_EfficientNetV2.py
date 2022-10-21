@@ -31,9 +31,10 @@ class Backbone(nn.Module):
         self.fine_tune = fine_tune
         self.apply(self.weight_init)
         self.num_features = None
+        self.model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
 
-    def forward(self):
-        model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
+    def forward(self, model_ft):
+        self.model_ft = torchvision.models.efficientnet_v2_s(weights="DEFAULT")
         set_parameter_requires_grad(model=model_ft, feature_extracting=False)
         # self.num_features = model_ft.AuxLogits.fc.in_features
         # model_ft.AuxLogits.fc = nn.Linear(self.num_features, self.num_classes)
