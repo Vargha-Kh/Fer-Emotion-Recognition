@@ -37,6 +37,8 @@ class Backbone(nn.Module):
         set_parameter_requires_grad(model=model_ft, feature_extracting=False)
         # self.num_features = model_ft.AuxLogits.fc.in_features
         # model_ft.AuxLogits.fc = nn.Linear(self.num_features, self.num_classes)
+        for name, child in model_ft.named_children():
+            print(name)
         self.num_features = model_ft.fc.in_features
         model_ft.fc = nn.Linear(self.num_features, 7)
         return model_ft
