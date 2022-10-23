@@ -37,7 +37,7 @@ class Backbone(nn.Module):
         self.bntran1 = nn.BatchNorm2d(3)
         self.convtran2 = nn.Conv2d(256, 3, 7, 1)
         self.bntran2 = nn.BatchNorm2d(3)
-        self.convtran3 = nn.Conv2d(512, 3, 2, 1, 1)
+        self.convtran3 = nn.Conv2d(512, 3, 2, 1,1)
         self.bntran3 = nn.BatchNorm2d(3)
         # Visual Token Embedding.
         self.layernorm = nn.LayerNorm(192)
@@ -61,19 +61,19 @@ class Backbone(nn.Module):
         # L1  feature transformation from the pyramid features
         l1 = F.leaky_relu(self.bntran1(self.convtran1(x)))
         # L1 reshape to (1 x c h w)
-        l1 = l1.view(batchsize, 1, -1)
+        l1 = l1.view(batchsize,1,-1)
         # L1 token_embedding to T1    L1(1xCHW)--->T1(1xD)
         # in this model D=128
         l1 = self.line(self.dropout(F.relu(self.layernorm(l1))))
 
         x = self.layer3(x)
         l2 = F.leaky_relu(self.bntran2(self.convtran2(x)))
-        l2 = l2.view(batchsize, 1, -1)
+        l2 = l2.view(batchsize,1,-1)
         l2 = self.line(self.dropout(F.relu(self.layernorm(l2))))
 
         x = self.layer4(x)
         l3 = F.leaky_relu(self.bntran3(self.convtran3(x)))
-        l3 = l3.view(batchsize, 1, -1)
+        l3 = l3.view(batchsize,1,-1)
         l3 = self.line(self.dropout(F.relu(self.layernorm(l3))))
 
         x = torch.cat((l1, l2), dim=1)
@@ -84,14 +84,15 @@ class Backbone(nn.Module):
         return x
 
 
+
 # input: img(batchsize,c,h,w)--->output: img_feature_map(batchsize,c,h,w)
 # in FER+ (b,3,48,48)
 class GWA(nn.Module):
     @staticmethod
     def weight_init(m):
-        if isinstance(m, nn.Conv2d):
+        if isinstance(m,nn.Conv2d):
             nn.init.kaiming_uniform_(m.weight)
-        elif isinstance(m, nn.Linear):
+        elif isinstance(m,nn.Linear):
             nn.init.xavier_normal_(m.weight)
             nn.init.constant_(m.bias, 0)
         elif isinstance(m, nn.BatchNorm2d):
@@ -128,13 +129,13 @@ class GWA(nn.Module):
         x = torch.cat(tuple(temp), dim=1)
         query = x
         key = torch.transpose(query, 3, 4)
-        attn = F.softmax(torch.matmul(query, key) / 56, dim=1)
+        attn = F.softmax(torch.matmul(query, key) / 56,dim=1)
         # nattn = torch.zeros(batchsize, 9, 3, 1, 1)
         temp = []
         for i in range(attn.shape[1]):
             temp.append(self.aap(attn[:, i, :, :, :]).unsqueeze(0).transpose(0, 1))
         pattn = torch.ones(56, 56).cuda() * torch.cat(tuple(temp), dim=1)
-        pattn = pattn.permute(0, 2, 3, 1, 4).contiguous()
+        pattn = pattn.permute(0,2,3,1,4).contiguous()
         pattn = pattn.view(batchsize, 3, 224, 224).cuda()
         map = pattn * img  # (b,3,48,48)
         return img, map
@@ -158,7 +159,7 @@ class GWA_Fusion(nn.Module):
         self.bnt1 = nn.BatchNorm2d(3)
         self.convt2 = nn.Conv2d(3, 3, (3, 3), 1, 1)
         self.bnt2 = nn.BatchNorm2d(3)
-        self.convrfn1 = nn.Conv2d(3, 3, (3, 3), 1, 1)
+        self.convrfn1 = nn.Conv2d(3,3,(3,3),1,1)
         self.bnrfn1 = nn.BatchNorm2d(3)
         self.prelu1 = nn.PReLU(3)
         self.convrfn2 = nn.Conv2d(3, 3, (3, 3), 1, 1)
@@ -173,7 +174,7 @@ class GWA_Fusion(nn.Module):
         map_trans = F.relu(self.bnt2(self.convt1(map)))
         result = self.prelu1(self.bnrfn1(self.convrfn1(img_trans + map_trans)))
         result = self.prelu2(self.bnrfn2(self.convrfn2(result)))
-        result = self.sigmod(self.convrfn3(result + img_trans + map_trans))
+        result = self.sigmod(self.convrfn3(result+img_trans + map_trans))
 
         return result
 
@@ -185,7 +186,8 @@ class VTA(nn.Module):
         self.transformer = Transformer(num_layers=10, dim=192, num_heads=8,
                                        ff_dim=768, dropout=0.6)
         self.layernorm = nn.LayerNorm(192)
-        self.fc = nn.Linear(192, 6)
+        self.fc = nn.Linear(192, 7)
+
 
     def forward(self, x):
         x = self.transformer(x)
@@ -211,8 +213,8 @@ class FERVT(nn.Module):
         # Evaluation mode on
 
     def forward(self, x):
-        img, map = self.gwa(x)
-        emotions = self.vta(self.backbone(self.gwa_f(img, map)))
+        img,map = self.gwa(x)
+        emotions = self.vta(self.backbone(self.gwa_f(img,map)))
         return emotions
 
 
