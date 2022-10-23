@@ -50,7 +50,7 @@ class Trainer:
         total_acc_valid = valid_acc / num_image
         return model, total_loss_valid, total_acc_valid.item()
 
-    def training(self, model, ds_train, ds_valid, criterion, optimizer, scheduler, device, epochs):
+    def training(self, model, ds_train, ds_valid, criterion, optimizer, reduce_on_plateau, exp_lr, device, epochs):
         train_losses = []
         valid_losses = []
         train_accs = []
@@ -74,7 +74,8 @@ class Trainer:
                       'val_loss': total_loss_valid, 'LR': optimizer.param_groups[0]['lr']}
 
             CSV_log(path=self.csv_log_dir, filename='log_file', score=scores)
-            scheduler.step(total_loss_valid)
+            reduce_on_plateau.step(total_loss_valid)
+            exp_lr.step()
             metrics = {'train_loss': train_losses, 'train_acc': train_accs, 'val_loss': valid_losses,
                        'val_acc': valid_accs}
 
