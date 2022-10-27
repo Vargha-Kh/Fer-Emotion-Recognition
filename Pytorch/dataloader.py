@@ -3,9 +3,10 @@ from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 
 
-def get_dataset(directory="./fer2013", batch_size=256, img_size=224):
+def get_dataset(directory="./fer2013", batch_size=256, img_size=48):
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
+         transforms.Grayscale(),
          transforms.RandomAffine(0.2),
          transforms.RandomRotation(0.1),
          transforms.RandomHorizontalFlip(),
@@ -14,9 +15,10 @@ def get_dataset(directory="./fer2013", batch_size=256, img_size=224):
                               std=[0.229, 0.224, 0.225])])
     transform_val = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
-         transforms.ToTensor(),
-         transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                              std=[0.229, 0.224, 0.225])])
+        transforms.Grayscale(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])])
 
     train_data = datasets.ImageFolder(directory + '/train', transform=transform_train)
     val_data = datasets.ImageFolder(directory + '/val', transform=transform_val)

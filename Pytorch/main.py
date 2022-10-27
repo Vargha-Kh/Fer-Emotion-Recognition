@@ -4,17 +4,18 @@ from dataloader import get_dataset
 from model_pytorch import Regnet
 from train import Trainer
 import FERVT
-import math
 from adan_pytorch import Adan
 from adabelief_pytorch import AdaBelief
 import os
+from VIT import MyViT
+from VITT import VIT
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 # os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 # torch.cuda.empty_cache()
 
 if __name__ == "__main__":
-    num_classes = 6
+    num_classes = 7
     augmentation = True
     batch_size = 128
     num_epochs = 300
@@ -23,8 +24,8 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataset()
 
     # Model loading
-    FER_VT = FERVT.FERVT(device)
-
+    # model = VIT().to(device)
+    FER_VT = MyViT((1, 48, 48), n_patches=7, n_blocks=2, hidden_d=8, n_heads=2, out_d=num_classes).to(device)
     # Hyper-parameters
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.AdamW(FER_VT.parameters(), lr=0.001)
