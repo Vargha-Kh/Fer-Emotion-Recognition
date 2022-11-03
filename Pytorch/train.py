@@ -75,7 +75,7 @@ class Trainer:
 
             CSV_log(path=self.csv_log_dir, filename='log_file', score=scores)
             reduce_on_plateau.step(total_loss_valid)
-#            exp_lr.step()
+            exp_lr.step()
             metrics = {'train_loss': train_losses, 'train_acc': train_accs, 'val_loss': valid_losses,
                        'val_acc': valid_accs}
 
