@@ -3,19 +3,20 @@ from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 
 
-def get_dataset(directory="./fer2013", batch_size=256, img_size=48):
+def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(),
          transforms.RandomRotation(0.3),
          transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
-         transforms.Normalize((0.5,), (0.5,))])
+         transforms.Normalize((0.5,), (0.5, ))])
+
     transform_val = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
         transforms.Grayscale(),
         transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))])
+        transforms.Normalize((0.5,), (0.5, ))])
 
     train_data = datasets.ImageFolder(directory + '/train', transform=transform_train)
     val_data = datasets.ImageFolder(directory + '/val', transform=transform_val)
