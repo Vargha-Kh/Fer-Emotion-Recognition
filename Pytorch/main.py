@@ -38,20 +38,20 @@ if __name__ == "__main__":
     # Hyper-parameters
     wd = 0.001
     criterion = nn.CrossEntropyLoss()
-    #optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
+    optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
     #optimizer = SGD(FER_VT.parameters(), lr=0.001)
-    optimizer = SGDW(FER_VT.parameters(), lr=0.001, momentum=9, weight_decay=wd)
+    #optimizer = SGDW(FER_VT.parameters(), lr=0.001, momentum=9, weight_decay=wd)
     #exp_lr = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999, verbose=True)
     #scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
 #                                                   lambda x: ((1 + math.cos(x * math.pi / num_epochs)) / 2) * (
  #                                                          1 - 0.2) + 0.2)
 
-    lr_finder = LRFinder(FER_VT, optimizer, criterion, device="cuda")
-    lr_finder.range_test(trainloader, val_loader=val_loader, end_lr=0.1, num_iter=100, step_mode="linear")
-    print("LR: ", lr_finder)
+    # lr_finder = LRFinder(FER_VT, optimizer, criterion, device="cuda")
+    # lr_finder.range_test(trainloader, val_loader=val_loader, end_lr=0.1, num_iter=100, step_mode="linear")
+    # print("LR: ", lr_finder)
 
-    lr_scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, 0.001, 0.01)
-
+    # lr_scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, 0.001, 0.01)
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0, last_epoch=- 1, verbose=True)
     # FER_VT.load_state_dict(torch.load('./model/best.pth'))
     reduce_on_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=5, verbose=True)
     #optimizer = Lookahead( optimizer, alpha= 0.6 , k = 10) 
