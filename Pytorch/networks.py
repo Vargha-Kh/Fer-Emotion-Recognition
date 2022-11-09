@@ -198,8 +198,7 @@ class ResNet_AT(nn.Module):
             if self.at_type == 'self_relation-attention':
                 output = self.dropout2(output)
                 pred_score = self.pred_fc2(output)
-
-            return pred_score
+                return pred_score
 
         if phrase == 'eval':
             if AT_level == 'first_level':
