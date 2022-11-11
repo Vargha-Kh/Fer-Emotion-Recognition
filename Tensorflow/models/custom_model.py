@@ -14,23 +14,20 @@ class CustomClassifier:
 
     def get_model(self) -> Model:
         model = tf.keras.models.Sequential()   
-
-        model.add(Conv2D(32, kernel_size=(3, 3), padding='same', activation='relu', input_shape =(48,48,1)))
-        model.add(Conv2D(64, kernel_size=(3, 3), activation='relu', padding='same'))
-        model.add(BatchNormalization())
-        model.add(MaxPooling2D(2, 2))
-        model.add(Dropout(0.25))
-
-        model.add(Conv2D(128, kernel_size=(3, 3), activation='relu', padding='same', kernel_regularizer=regularizers.l2(0.01)))
-        model.add(Conv2D(256, kernel_size=(3, 3), activation='relu', kernel_regularizer=regularizers.l2(0.01)))
-        model.add(BatchNormalization())
+        model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
+        model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
-
+        
+        model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Dropout(0.25))
+        
         model.add(Flatten())
         model.add(Dense(1024, activation='relu'))
         model.add(Dropout(0.5))
-
-        model.add(Dense(8, activation='softmax'))
+        model.add(Dense(7, activation='softmax'))
 
         return model

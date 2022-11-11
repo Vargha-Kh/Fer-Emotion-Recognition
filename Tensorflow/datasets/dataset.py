@@ -109,7 +109,7 @@ class Dataset:
             subset='training')
 
         validation_generator = train_datagen.flow_from_directory(
-            dataset_dir + "train/",
+            dataset_dir + "val/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
             color_mode='grayscale',
@@ -117,7 +117,7 @@ class Dataset:
             shuffle=True,
             subset='validation')
 
-        test_generator = test_datagen.flow_from_directory(dataset_dir + "test/", target_size=(img_size, img_size),
-                                                          batch_size=batch_size, color_mode='grayscale', class_mode='categorical')
+        # test_generator = test_datagen.flow_from_directory(dataset_dir + "test/", target_size=(img_size, img_size),
+                                                        #   batch_size=batch_size, color_mode='grayscale', class_mode='categorical')
 
-        return train_generator, validation_generator, test_generator
+        return train_generator, validation_generator

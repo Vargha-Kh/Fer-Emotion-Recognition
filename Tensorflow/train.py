@@ -28,10 +28,10 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='transformers', n_epochs=300, batch_size=64,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='custom', n_epochs=300, batch_size=256,
                    learning_rate=0.001,
                    lr_reducer_factor=0.2,
-                   lr_reducer_patience=8, img_size=48, split_size=.025, framework='keras')
+                   lr_reducer_patience=10, img_size=48, split_size=.025, framework='keras')
     model = load_model(model_name=hps['model_name'])
 
     METRICS = [
@@ -47,7 +47,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=0.0001),
+                  optimizer=tfa.optimizers.Adam(learning_rate=hps['learning_rate'], weight_decay=1e-6),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
@@ -59,7 +59,7 @@ def train():
     early_stopping = EarlyStopping(
         monitor="val_loss",
         min_delta=0,
-        patience=20,
+        patience=50,
         verbose=1,
         mode="auto",
         baseline=None,
