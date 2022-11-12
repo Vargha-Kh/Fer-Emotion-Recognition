@@ -6,6 +6,7 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Early
 from datasets.dataset import Dataset
 from plotting import plot
 import tensorflow_addons as tfa
+
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
 from cosine_annealing import CosineAnnealingScheduler
@@ -34,7 +35,7 @@ def train():
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
-
+    model = tensorflow.keras.models.load_model('./best_model_acc_0.64.h5')
     METRICS = [
         metrics.TruePositives(name='tp'),
         metrics.FalsePositives(name='fp'),
@@ -48,7 +49,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-6),
+                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-4),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
@@ -71,7 +72,7 @@ def train():
     cosine_decay_restarts = CosineAnnealingScheduler(T_max=200, eta_max=1e-2, eta_min=1e-4)
     tensorboard_callback = TensorBoard(log_dir="./logs")
 
-    model_checkpoint_acc = ModelCheckpoint("./best_model_acc_{val_accuracy:.2f}.h5", monitor='val_accuracy', save_best_only=True,
+    model_checkpoint_acc = ModelCheckpoint("./best_model.h5", monitor='val_accuracy', save_best_only=True,
                                            verbose=1)
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
