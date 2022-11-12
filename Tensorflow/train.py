@@ -31,7 +31,7 @@ def train():
     hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
                    learning_rate=0.001,
                    lr_reducer_factor=0.2,
-                   lr_reducer_patience=10, img_size=48, split_size=.025, framework='keras')
+                   lr_reducer_patience=10, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
 
     METRICS = [
@@ -97,7 +97,7 @@ def train():
                                                           batch_size=hps['batch_size'], class_mode='categorical')
         model_evaluation(model, test_generator)
     elif hps['framework'] == 'keras':
-        train_generator, validation_generator, test_generator = Dataset.keras_preprocess(
+        train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
             img_size=hps['img_size'],
             batch_size=hps['batch_size'],
