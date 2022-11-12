@@ -33,7 +33,7 @@ def train():
     hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
-                   lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
+                   lr_reducer_patience=12, img_size=48, split_size=0.75, framework='keras')
     model = load_model(model_name=hps['model_name'])
     #model = models.load_model('./best_model.h5')
     METRICS = [
@@ -83,7 +83,7 @@ def train():
         train_ds, val_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
                                                                   img_size=hps['img_size'],
                                                                   batch_size=hps['batch_size'],
-                                                                  train_augment=True, val_augment=True, split_size=0.3)
+                                                                  train_augment=True, val_augment=True, split_size=hps['split_size'])
         history = model.fit(
             train_ds,
             validation_data=val_ds,
