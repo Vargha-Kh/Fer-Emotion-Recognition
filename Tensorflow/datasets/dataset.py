@@ -91,7 +91,8 @@ class Dataset:
                 # zoom_range=0.2,
                 horizontal_flip=True,
                 width_shift_range=0.2,
-                rotation_range=0.3)
+                rotation_range=0.3,
+                validation_split=split_size)
         else:
             train_datagen = ImageDataGenerator(
                 rescale=1. / 255,
