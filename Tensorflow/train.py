@@ -48,7 +48,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-7),
+                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-6),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
