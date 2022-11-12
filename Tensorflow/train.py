@@ -8,6 +8,7 @@ from plotting import plot
 import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
+from cosine_annealing import CosineAnnealingScheduler
 # from numba import cuda 
 
 devices = tf.config.experimental.list_physical_devices('GPU')
@@ -66,8 +67,8 @@ def train():
         restore_best_weights=True,
     )
     
-    cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 200, t_mul=1.0)
-
+    # cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 200, t_mul=1.0)
+    cosine_decay_restarts = CosineAnnealingScheduler(T_max=200, eta_max=1e-2, eta_min=1e-4)
     tensorboard_callback = TensorBoard(log_dir="./logs")
 
     model_checkpoint_acc = ModelCheckpoint("./best_model_acc_{val_accuracy:.2f}.h5", monitor='val_accuracy', save_best_only=True,
