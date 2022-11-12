@@ -30,8 +30,8 @@ def model_evaluation(model, test_gen):
 def train():
     hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
                    learning_rate=0.001,
-                   lr_reducer_factor=0.2,
-                   lr_reducer_patience=10, img_size=48, split_size=0.3, framework='keras')
+                   lr_reducer_factor=0.1,
+                   lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
 
     METRICS = [
@@ -47,14 +47,14 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-6),
+                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-4),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
                                   factor=hps['lr_reducer_factor'],
                                   patience=hps['lr_reducer_patience'],
                                   verbose=1,
-                                  min_delta=0.0001)
+                                  min_delta=0.00001)
 
     early_stopping = EarlyStopping(
         monitor="val_loss",
@@ -63,10 +63,10 @@ def train():
         verbose=1,
         mode="auto",
         baseline=None,
-        restore_best_weights=False,
+        restore_best_weights=True,
     )
     
-    cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 1000)
+    cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 200, t_mul=1.0)
 
     tensorboard_callback = TensorBoard(log_dir="./logs")
 
@@ -75,7 +75,7 @@ def train():
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
 
-    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
+    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, cosine_decay_restarts]
 
     if hps['framework'] == 'tensorflow':
         train_ds, val_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],

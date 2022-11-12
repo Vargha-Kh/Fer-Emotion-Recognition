@@ -106,6 +106,7 @@ class Dataset:
             batch_size=batch_size,
             color_mode='grayscale',
             class_mode='categorical',
+            shuffle=True,
             subset='training')
 
         validation_generator = train_datagen.flow_from_directory(
