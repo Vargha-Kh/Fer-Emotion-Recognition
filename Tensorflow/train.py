@@ -76,7 +76,7 @@ def train():
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
 
-    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, cosine_decay_restarts]
+    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
 
     if hps['framework'] == 'tensorflow':
         train_ds, val_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
