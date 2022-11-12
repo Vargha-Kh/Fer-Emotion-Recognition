@@ -28,7 +28,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom', n_epochs=300, batch_size=256,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
                    learning_rate=0.001,
                    lr_reducer_factor=0.2,
                    lr_reducer_patience=10, img_size=48, split_size=.025, framework='keras')
@@ -47,7 +47,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.Adam(learning_rate=hps['learning_rate'], weight_decay=1e-6),
+                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-6),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
