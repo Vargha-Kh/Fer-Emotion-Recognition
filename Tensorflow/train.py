@@ -1,7 +1,7 @@
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from models import load_model
 from hp import load_hps
-from tensorflow.keras import metrics, optimizers
+from tensorflow.keras import metrics, optimizers, models
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping, TensorBoard
 from datasets.dataset import Dataset
 from plotting import plot
@@ -35,7 +35,7 @@ def train():
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
-    model = tensorflow.keras.models.load_model('./best_model_acc_0.64.h5')
+    model = models.load_model('./best_model_acc_0.64.h5')
     METRICS = [
         metrics.TruePositives(name='tp'),
         metrics.FalsePositives(name='fp'),
