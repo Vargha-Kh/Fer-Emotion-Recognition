@@ -6,7 +6,6 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Early
 from datasets.dataset import Dataset
 from plotting import plot
 import tensorflow_addons as tfa
-
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
 from cosine_annealing import CosineAnnealingScheduler
@@ -49,7 +48,7 @@ def train():
     ]
     wd = 1e-4 * hps['learning_rate']
     model.compile(loss='categorical_crossentropy',
-                  optimizer=tfa.optimizers.AdamW(learning_rate=hps['learning_rate'], weight_decay=1e-6),
+                  optimizer=optimizers.Adam(learning_rate=hps['learning_rate'], decay=1e-6),
                   metrics=["accuracy"])
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
