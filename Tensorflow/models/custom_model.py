@@ -23,6 +23,8 @@ class CustomClassifier:
         model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
         model.add(MaxPooling2D(pool_size=(2, 2)))
+        model.add(Conv2D(256, kernel_size=(3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.1))
         
         model.add(Flatten())
