@@ -35,7 +35,7 @@ def train():
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
-    #model = models.load_model('./best_model_acc_0.64.h5')
+    #model = models.load_model('./best_model.h5')
     METRICS = [
         metrics.TruePositives(name='tp'),
         metrics.FalsePositives(name='fp'),
