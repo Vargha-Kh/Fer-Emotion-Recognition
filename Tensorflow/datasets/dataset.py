@@ -110,7 +110,7 @@ class Dataset:
             subset='training')
 
         validation_generator = train_datagen.flow_from_directory(
-            dataset_dir + "val/",
+            dataset_dir + "train/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
             color_mode='grayscale',

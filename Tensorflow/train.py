@@ -33,7 +33,7 @@ def train():
     hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=512,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
-                   lr_reducer_patience=12, img_size=48, split_size=0.5, framework='keras')
+                   lr_reducer_patience=12, img_size=48, split_size=0.3, framework='keras')
     model = load_model(model_name=hps['model_name'])
     #model = models.load_model('./best_model.h5')
     METRICS = [
