@@ -78,7 +78,7 @@ def train():
     callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
 
     if hps['framework'] == 'tensorflow':
-        train_ds, val_ds, test_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
+        train_ds, val_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
                                                                   img_size=hps['img_size'],
                                                                   batch_size=hps['batch_size'],
                                                                   train_augment=True, val_augment=True, split_size=0.3)
@@ -111,7 +111,7 @@ def train():
             callbacks=callbacks,
             verbose=2)
         plot(history)
-        model_evaluation(model, test_generator)
+        model_evaluation(model, validation_generator)
 
 
 if __name__ == '__main__':
