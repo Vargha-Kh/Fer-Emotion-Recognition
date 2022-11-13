@@ -156,10 +156,9 @@ class ResNet_AT(nn.Module):
             num_pair = 3
 
             for i in range(num_pair):
-                print(list(x.size))
-                x = torch.reshape(1,5)
-                f = x[:, :, :, :, i]  # x[128,3,224,224]
-
+                # f = x[:, :, :, :, i]  # x[128,3,224,224]
+                x = [128,3,224,224,i]
+                f = torch.tensor(x)
                 f = self.conv1(f)
                 f = self.bn1(f)
                 f = self.relu(f)
