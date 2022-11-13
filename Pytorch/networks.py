@@ -157,8 +157,7 @@ class ResNet_AT(nn.Module):
 
             for i in range(num_pair):
                 # f = x[:, :, :, :, i]  # x[128,3,224,224]
-                x = [128,3,224,224,i]
-                f = torch.tensor(x)
+                f = x
                 f = self.conv1(f)
                 f = self.bn1(f)
                 f = self.relu(f)
