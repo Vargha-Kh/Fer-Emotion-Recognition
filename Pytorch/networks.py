@@ -156,9 +156,7 @@ class ResNet_AT(nn.Module):
             num_pair = 3
 
             for i in range(num_pair):
-                # f = x[:, :, :, :, i]  # x[128,3,224,224]
-                f = x
-                f = self.conv1(f)
+                f = self.conv1(x)
                 f = self.bn1(f)
                 f = self.relu(f)
                 f = self.maxpool(f)
