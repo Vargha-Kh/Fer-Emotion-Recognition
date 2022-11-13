@@ -156,7 +156,8 @@ class ResNet_AT(nn.Module):
             num_pair = 3
 
             for i in range(num_pair):
-                print(x.size(), x.shape())
+                print(x.shape())
+                print(list(x.size()))
                 x = torch.reshape(1,5)
                 f = x[:, :, :, :, i]  # x[128,3,224,224]
 
