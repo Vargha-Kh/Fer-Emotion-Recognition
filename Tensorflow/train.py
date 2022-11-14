@@ -8,12 +8,16 @@ from plotting import plot
 import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
+from CosineDecayRestarts import WarmUpCosine
 from cosine_annealing import CosineAnnealingScheduler
-# from numba import cuda 
+from VIT import create_vit_classifier
+
 
 devices = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(devices[0], True)
 tf.keras.backend.clear_session()
+
+
 # # device = cuda.get_current_device()
 # device.reset()
 
@@ -34,7 +38,7 @@ def train():
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
     model = load_model(model_name=hps['model_name'])
-    #model = models.load_model('./best_model.h5')
+    # model = models.load_model('./best_model.h5')
     METRICS = [
         metrics.TruePositives(name='tp'),
         metrics.FalsePositives(name='fp'),
@@ -47,9 +51,19 @@ def train():
         metrics.AUC(name='auc')
     ]
     wd = 1e-4 * hps['learning_rate']
-    model.compile(loss='categorical_crossentropy',
-                  optimizer=optimizers.Adam(learning_rate=hps['learning_rate'], decay=1e-6),
-                  metrics=["accuracy"])
+
+    optimizer = tfa.optimizers.AdamW(
+        learning_rate=hps['learning_rate'], weight_decay=0.0001
+    )
+
+    model.compile(
+        optimizer=optimizer,
+        loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        metrics=[
+            keras.metrics.SparseCategoricalAccuracy(name="accuracy"),
+            keras.metrics.SparseTopKCategoricalAccuracy(5, name="top-5-accuracy"),
+        ],
+    )
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',
                                   factor=hps['lr_reducer_factor'],
@@ -66,7 +80,7 @@ def train():
         baseline=None,
         restore_best_weights=True,
     )
-    
+
     # cosine_decay_restarts = optimizers.schedules.CosineDecayRestarts(hps['learning_rate'], 200, t_mul=1.0)
     cosine_decay_restarts = CosineAnnealingScheduler(T_max=200, eta_max=1e-2, eta_min=1e-4)
     tensorboard_callback = TensorBoard(log_dir="./logs")
@@ -76,33 +90,27 @@ def train():
     # model_checkpoint_loss = ModelCheckpoint("./best_model_loss_{val_loss:.2f}.h5", monitor='val_loss', save_best_only=True,
     #                                         verbose=1)
 
-    callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
+    if hps['framework'] == 'keras':
 
-    if hps['framework'] == 'tensorflow':
-        train_ds, val_ds = Dataset.tensorflow_preprocess(dataset_dir=hps['dataset_dir'],
-                                                                  img_size=hps['img_size'],
-                                                                  batch_size=hps['batch_size'],
-                                                                  train_augment=True, val_augment=True, split_size=hps['split_size'])
-        history = model.fit(
-            train_ds,
-            validation_data=val_ds,
-            epochs=hps['n_epochs'],
-            batch_size=hps['batch_size'],
-            callbacks=callbacks,
-            verbose=2
-        )
-        plot(history)
-        test_datagen = ImageDataGenerator(rescale=1 / 255)
-        test_generator = test_datagen.flow_from_directory(hps['dataset_dir'] + "val/",
-                                                          target_size=(hps['img_size'], hps['img_size']),
-                                                          batch_size=hps['batch_size'], class_mode='categorical')
-        model_evaluation(model, test_generator)
-    elif hps['framework'] == 'keras':
+        # Run experiments with the vanilla ViT
+        model = create_vit_classifier(vanilla=True)
+
         train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
             img_size=hps['img_size'],
             batch_size=hps['batch_size'],
             augment=True, split_size=hps['split_size'])
+
+        total_steps = (train_generator.samples / hps['batch_size']) * hps['n_epochs']
+        warmup_epoch_percentage = 0.10
+        warmup_steps = int(total_steps * warmup_epoch_percentage)
+        scheduled_lrs = WarmUpCosine(
+            learning_rate_base=LEARNING_RATE,
+            total_steps=total_steps,
+            warmup_learning_rate=0.0,
+            warmup_steps=warmup_steps,
+        )
+        callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, scheduled_lrs]
         history = model.fit(
             train_generator,
             steps_per_epoch=train_generator.samples // hps['batch_size'],

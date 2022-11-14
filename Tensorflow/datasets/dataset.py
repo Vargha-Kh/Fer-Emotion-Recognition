@@ -104,7 +104,7 @@ class Dataset:
             dataset_dir + "train/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
-            color_mode='grayscale',
+            # color_mode='grayscale',
             class_mode='categorical',
             shuffle=True,
             subset='training')
@@ -113,7 +113,7 @@ class Dataset:
             dataset_dir + "train/",
             target_size=(img_size, img_size),
             batch_size=batch_size,
-            color_mode='grayscale',
+            # color_mode='grayscale',
             class_mode='categorical',
             shuffle=True,
             subset='validation')

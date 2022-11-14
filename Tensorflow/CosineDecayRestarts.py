@@ -34,11 +34,11 @@ class CosineDecayRestarts(tf.keras.callbacks.Callback):
             """Helper for `cond` operation."""
             if geometric:
                 i_restart = math_ops.floor(
-                  math_ops.log(1.0 - completed_fraction * (1.0 - self.t_mul)) /
-                  math_ops.log(self.t_mul))
+                    math_ops.log(1.0 - completed_fraction * (1.0 - self.t_mul)) /
+                    math_ops.log(self.t_mul))
 
-                sum_r = (1.0 - self.t_mul**i_restart) / (1.0 - self.t_mul)
-                completed_fraction = (completed_fraction - sum_r) / self.t_mul**i_restart
+                sum_r = (1.0 - self.t_mul ** i_restart) / (1.0 - self.t_mul)
+                completed_fraction = (completed_fraction - sum_r) / self.t_mul ** i_restart
 
             else:
                 i_restart = math_ops.floor(completed_fraction)
@@ -49,13 +49,54 @@ class CosineDecayRestarts(tf.keras.callbacks.Callback):
         completed_fraction = step / self.first_decay_steps
 
         i_restart, completed_fraction = control_flow_ops.cond(
-          math_ops.equal(self.t_mul, 1.0),
-          lambda: compute_step(completed_fraction, geometric=False),
-          lambda: compute_step(completed_fraction, geometric=True))
+            math_ops.equal(self.t_mul, 1.0),
+            lambda: compute_step(completed_fraction, geometric=False),
+            lambda: compute_step(completed_fraction, geometric=True))
 
-        m_fac = self.m_mul**i_restart
+        m_fac = self.m_mul ** i_restart
         cosine_decayed = 0.5 * m_fac * (1.0 + math_ops.cos(
-          constant_op.constant(math.pi) * completed_fraction))
+            constant_op.constant(math.pi) * completed_fraction))
         decayed = (1 - self.alpha) * cosine_decayed + self.alpha
 
         return math_ops.multiply(self.initial_learning_rate, decayed)
+
+
+class WarmUpCosine(keras.optimizers.schedules.LearningRateSchedule):
+    def __init__(
+            self, learning_rate_base, total_steps, warmup_learning_rate, warmup_steps
+    ):
+        super(WarmUpCosine, self).__init__()
+
+        self.learning_rate_base = learning_rate_base
+        self.total_steps = total_steps
+        self.warmup_learning_rate = warmup_learning_rate
+        self.warmup_steps = warmup_steps
+        self.pi = tf.constant(np.pi)
+
+    def __call__(self, step):
+        if self.total_steps < self.warmup_steps:
+            raise ValueError("Total_steps must be larger or equal to warmup_steps.")
+
+        cos_annealed_lr = tf.cos(
+            self.pi
+            * (tf.cast(step, tf.float32) - self.warmup_steps)
+            / float(self.total_steps - self.warmup_steps)
+        )
+        learning_rate = 0.5 * self.learning_rate_base * (1 + cos_annealed_lr)
+
+        if self.warmup_steps > 0:
+            if self.learning_rate_base < self.warmup_learning_rate:
+                raise ValueError(
+                    "Learning_rate_base must be larger or equal to "
+                    "warmup_learning_rate."
+                )
+            slope = (
+                            self.learning_rate_base - self.warmup_learning_rate
+                    ) / self.warmup_steps
+            warmup_rate = slope * tf.cast(step, tf.float32) + self.warmup_learning_rate
+            learning_rate = tf.where(
+                step < self.warmup_steps, warmup_rate, learning_rate
+            )
+        return tf.where(
+            step > self.total_steps, 0.0, learning_rate, name="learning_rate"
+        )
