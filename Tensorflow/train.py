@@ -39,6 +39,8 @@ def train():
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
     # model = load_model(model_name=hps['model_name'])
     # model = models.load_model('./best_model.h5')
+    # Run experiments with the vanilla ViT
+    model = create_vit_classifier(vanilla=True)
     METRICS = [
         metrics.TruePositives(name='tp'),
         metrics.FalsePositives(name='fp'),
@@ -92,8 +94,7 @@ def train():
 
     if hps['framework'] == 'keras':
 
-        # Run experiments with the vanilla ViT
-        model = create_vit_classifier(vanilla=True)
+
 
         train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
