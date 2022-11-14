@@ -12,8 +12,9 @@ from CosineDecayRestarts import WarmUpCosine
 from cosine_annealing import CosineAnnealingScheduler
 from models.VIT import create_vit_classifier
 
-
 devices = tf.config.experimental.list_physical_devices('GPU')
+
+
 # tf.config.experimental.set_memory_growth(devices[0], True)
 # tf.keras.backend.clear_session()
 
@@ -93,9 +94,6 @@ def train():
     #                                         verbose=1)
 
     if hps['framework'] == 'keras':
-
-
-
         train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
             img_size=hps['img_size'],
@@ -106,7 +104,7 @@ def train():
         warmup_epoch_percentage = 0.10
         warmup_steps = int(total_steps * warmup_epoch_percentage)
         scheduled_lrs = WarmUpCosine(
-            learning_rate_base=LEARNING_RATE,
+            learning_rate_base=hps['learning_rate'],
             total_steps=total_steps,
             warmup_learning_rate=0.0,
             warmup_steps=warmup_steps,
