@@ -5,6 +5,7 @@ from tensorflow import keras
 import tensorflow_addons as tfa
 import matplotlib.pyplot as plt
 from tensorflow.keras import layers
+INPUT_SHAPE = (48, 48, 3)
 
 # ARCHITECTURE
 BUFFER_SIZE = 512
