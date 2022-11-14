@@ -62,10 +62,10 @@ def train():
 
     model.compile(
         optimizer=optimizer,
-        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
         metrics=[
-            tf.keras.metrics.SparseCategoricalAccuracy(name="accuracy"),
-            tf.keras.metrics.SparseTopKCategoricalAccuracy(5, name="top-5-accuracy"),
+            tf.keras.metrics.CategoricalAccuracy(name="accuracy"),
+            tf.keras.metrics.TopKCategoricalAccuracy(5, name="top-5-accuracy"),
         ],
     )
 
@@ -118,9 +118,9 @@ def train():
             validation_steps=validation_generator.samples // hps['batch_size'],
             epochs=hps['n_epochs'],
             callbacks=callbacks,
-            verbose=2)
+            verbose=1)
         plot(history)
-        model_evaluation(model, validation_generator)
+        # model_evaluation(model, validation_generator)
 
 
 if __name__ == '__main__':
