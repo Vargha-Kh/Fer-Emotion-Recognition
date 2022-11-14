@@ -62,11 +62,11 @@ def train():
 
     model.compile(
         optimizer=optimizer,
-        loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
-        metrics=[
-            tf.keras.metrics.CategoricalAccuracy(name="accuracy"),
-            tf.keras.metrics.TopKCategoricalAccuracy(5, name="top-5-accuracy"),
-        ],
+        loss='categorical_crossentropy',
+        metrics=["accuracy",
+                 tf.keras.metrics.CategoricalAccuracy(name="accuracy"),
+                 tf.keras.metrics.TopKCategoricalAccuracy(5, name="top-5-accuracy"),
+                 ],
     )
 
     reduce_lr = ReduceLROnPlateau(monitor='val_loss',

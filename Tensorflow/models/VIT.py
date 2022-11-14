@@ -77,7 +77,7 @@ class ShiftedPatchTokenization(layers.Layer):
             patch_size=PATCH_SIZE,
             num_patches=NUM_PATCHES,
             projection_dim=PROJECTION_DIM,
-            vanilla=False,
+            vanilla=True,
             **kwargs,
     ):
         super().__init__(**kwargs)
@@ -178,7 +178,7 @@ def create_vit_classifier(vanilla=False):
     # Augment data.
     augmented = data_augmentation(inputs)
     # Create patches.
-    (tokens, _) = ShiftedPatchTokenization(vanilla=vanilla)(augmented)
+    (tokens, _) = ShiftedPatchTokenization()(augmented)
     # Encode patches.
     encoded_patches = PatchEncoder()(tokens)
 
@@ -211,7 +211,7 @@ def create_vit_classifier(vanilla=False):
     # Add MLP.
     features = mlp(representation, hidden_units=MLP_HEAD_UNITS, dropout_rate=0.5)
     # Classify outputs.
-    logits = layers.Dense(7)(features)
+    logits = layers.Dense(7, activation="softmax")(features)
     # Create the Keras model.
     model = keras.Model(inputs=inputs, outputs=logits)
     return model
