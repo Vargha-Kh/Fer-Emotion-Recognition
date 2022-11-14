@@ -61,7 +61,7 @@ class CosineDecayRestarts(tf.keras.callbacks.Callback):
         return math_ops.multiply(self.initial_learning_rate, decayed)
 
 
-class WarmUpCosine(keras.optimizers.schedules.LearningRateSchedule):
+class WarmUpCosine(tf.keras.optimizers.schedules.LearningRateSchedule):
     def __init__(
             self, learning_rate_base, total_steps, warmup_learning_rate, warmup_steps
     ):
