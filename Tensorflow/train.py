@@ -33,7 +33,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='VIT', n_epochs=300, batch_size=512,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='VIT', n_epochs=300, batch_size=128,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
