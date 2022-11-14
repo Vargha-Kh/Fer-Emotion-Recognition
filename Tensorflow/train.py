@@ -64,7 +64,6 @@ def train():
         optimizer=optimizer,
         loss='categorical_crossentropy',
         metrics=["accuracy",
-                 tf.keras.metrics.CategoricalAccuracy(name="accuracy"),
                  tf.keras.metrics.TopKCategoricalAccuracy(5, name="top-5-accuracy"),
                  ],
     )
