@@ -10,7 +10,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 import tensorflow as tf
 from CosineDecayRestarts import WarmUpCosine
 from cosine_annealing import CosineAnnealingScheduler
-from VIT import create_vit_classifier
+from models.VIT import create_vit_classifier
 
 
 devices = tf.config.experimental.list_physical_devices('GPU')
@@ -37,7 +37,7 @@ def train():
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
-    model = load_model(model_name=hps['model_name'])
+    # model = load_model(model_name=hps['model_name'])
     # model = models.load_model('./best_model.h5')
     METRICS = [
         metrics.TruePositives(name='tp'),
@@ -93,7 +93,7 @@ def train():
     if hps['framework'] == 'keras':
 
         # Run experiments with the vanilla ViT
-        # model = create_vit_classifier(vanilla=True)
+        model = create_vit_classifier(vanilla=True)
 
         train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
