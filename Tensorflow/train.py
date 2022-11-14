@@ -33,7 +33,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=512,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='VIT', n_epochs=300, batch_size=512,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
@@ -93,7 +93,7 @@ def train():
     if hps['framework'] == 'keras':
 
         # Run experiments with the vanilla ViT
-        model = create_vit_classifier(vanilla=True)
+        # model = create_vit_classifier(vanilla=True)
 
         train_generator, validation_generator = Dataset.keras_preprocess(
             dataset_dir=hps['dataset_dir'],
