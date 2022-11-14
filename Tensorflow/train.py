@@ -101,16 +101,16 @@ def train():
             batch_size=hps['batch_size'],
             augment=True, split_size=hps['split_size'])
 
-        total_steps = (train_generator.samples / hps['batch_size']) * hps['n_epochs']
-        warmup_epoch_percentage = 0.10
-        warmup_steps = int(total_steps * warmup_epoch_percentage)
-        scheduled_lrs = WarmUpCosine(
-            learning_rate_base=hps['learning_rate'],
-            total_steps=total_steps,
-            warmup_learning_rate=0.0,
-            warmup_steps=warmup_steps,
-        )
-        callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback, scheduled_lrs]
+        # total_steps = (train_generator.samples / hps['batch_size']) * hps['n_epochs']
+        # warmup_epoch_percentage = 0.10
+        # warmup_steps = int(total_steps * warmup_epoch_percentage)
+        # scheduled_lrs = WarmUpCosine(
+        #     learning_rate_base=hps['learning_rate'],
+        #     total_steps=total_steps,
+        #     warmup_learning_rate=0.0,
+        #     warmup_steps=warmup_steps,
+        # )
+        callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
         history = model.fit(
             train_generator,
             steps_per_epoch=train_generator.samples // hps['batch_size'],
