@@ -2,6 +2,7 @@ from collections.abc import Iterable
 from tensorflow.keras.callbacks import *
 from tensorflow.keras import backend as K
 import tensorflow as tf
+import numpy as np
 from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.framework import constant_op
