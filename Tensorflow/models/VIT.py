@@ -5,6 +5,7 @@ from tensorflow import keras
 import tensorflow_addons as tfa
 import matplotlib.pyplot as plt
 from tensorflow.keras import layers
+
 INPUT_SHAPE = (48, 48, 3)
 
 # ARCHITECTURE
@@ -88,6 +89,19 @@ class ShiftedPatchTokenization(layers.Layer):
         self.flatten_patches = layers.Reshape((num_patches, -1))
         self.projection = layers.Dense(units=projection_dim)
         self.layer_norm = layers.LayerNormalization(epsilon=LAYER_NORM_EPS)
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "vanilla": self.vanilla,
+            "image_size": self.image_size,
+            "patch_size": self.patch_size,
+            "half_patch": self.half_patch,
+            "flatten_patches": self.flatten_patches,
+            "projection": self.projection,
+            "layer_norm": self.layer_norm,
+
+        })
 
     def crop_shift_pad(self, images, mode):
         # Build the diagonally shifted images
@@ -173,7 +187,7 @@ diag_attn_mask = 1 - tf.eye(NUM_PATCHES)
 diag_attn_mask = tf.cast([diag_attn_mask], dtype=tf.int8)
 
 
-def create_vit_classifier(vanilla=False):
+def create_vit_classifier(vanilla=true):
     inputs = layers.Input(shape=INPUT_SHAPE)
     # Augment data.
     augmented = data_augmentation(inputs)
@@ -215,5 +229,3 @@ def create_vit_classifier(vanilla=False):
     # Create the Keras model.
     model = keras.Model(inputs=inputs, outputs=logits)
     return model
-
-
