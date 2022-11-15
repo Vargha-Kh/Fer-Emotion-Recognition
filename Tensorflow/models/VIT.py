@@ -79,8 +79,7 @@ class ShiftedPatchTokenization(layers.Layer):
             num_patches=NUM_PATCHES,
             projection_dim=PROJECTION_DIM,
             vanilla=True,
-            **kwargs,
-    ):
+            **kwargs):
         super().__init__(**kwargs)
         self.vanilla = vanilla  # Flag to swtich to vanilla patch extractor
         self.image_size = image_size

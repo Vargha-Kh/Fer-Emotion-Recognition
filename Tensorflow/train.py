@@ -112,9 +112,9 @@ def train():
         callbacks = [reduce_lr, model_checkpoint_acc, early_stopping, tensorboard_callback]
         history = model.fit(
             train_generator,
-            steps_per_epoch=train_generator.samples // hps['batch_size'],
+            # steps_per_epoch=train_generator.samples // hps['batch_size'],
             validation_data=validation_generator,
-            validation_steps=validation_generator.samples // hps['batch_size'],
+            # validation_steps=validation_generator.samples // hps['batch_size'],
             epochs=hps['n_epochs'],
             callbacks=callbacks,
             verbose=1)
