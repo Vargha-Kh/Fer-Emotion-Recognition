@@ -7,9 +7,9 @@ import os
 from SGDW import SGDW
 from torch.optim import Adam, AdamW, SGD
 from VIT import MyViT
-from VITT import VIT
+from VITT import SimpleViT
 import math
-from vit_pytorch.deepvit import DeepViT
+from vit_pytorch import ViT
 from networks import resnet18_at
 from Lookahead import Lookahead
 from torch_lr_finder import LRFinder
@@ -28,9 +28,9 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataset()
 
     # Model loading
-    # FER_VT = DeepViT(image_size = 48, patch_size = 8, num_classes = num_classes, dim = 1280, depth = 4, heads = 16, mlp_dim = 5120, dropout = 0.1, emb_dropout = 0.1).to(device)
-    FER_VT = VIT(img_size=(48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=4096, num_heads=16, num_layers=24,
-                 n_classes=num_classes, dropout_rate=0.25, at_d_r=0.1).to(device)
+    FER_VT =  SimpleViT(image_size = 48, patch_size = 8, num_classes = num_classes, dim = 1024, depth = 6, heads = 16, mlp_dim = 2048, dropout = 0.1, emb_dropout = 0.1).to(device)
+    #FER_VT = VIT(img_size=(48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=4096, num_heads=16, num_layers=24,
+                 # n_classes=num_classes, dropout_rate=0.25, at_d_r=0.1).to(device)
     # FER_VT = MyViT((1, 48, 48), n_patches=8, n_blocks=4, hidden_d=1280, n_heads=16, out_d=num_classes).to(device)
     # FER_VT = resnet18_at(num_classes=7, at_type=0).to(device)
 
