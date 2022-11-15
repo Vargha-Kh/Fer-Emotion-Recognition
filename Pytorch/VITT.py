@@ -14,7 +14,7 @@ torch.cuda.empty_cache()
 class VIT(nn.Module):
     """"""""""" Vision Transformer"""""""""""
 
-    def __init__(self, img_size=(1, 48, 48), patch_size=(8, 8), emb_dim=1280, mlp_dim=5120, num_heads=16, num_layers=32,
+    def __init__(self, img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1280, mlp_dim=5120, num_heads=16, num_layers=32,
                  n_classes=7, dropout_rate=0.1, at_d_r=0.0):
         super(VIT, self).__init__()
 
