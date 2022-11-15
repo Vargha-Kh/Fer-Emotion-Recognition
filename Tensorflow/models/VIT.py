@@ -187,7 +187,7 @@ diag_attn_mask = 1 - tf.eye(NUM_PATCHES)
 diag_attn_mask = tf.cast([diag_attn_mask], dtype=tf.int8)
 
 
-def create_vit_classifier(vanilla=true):
+def create_vit_classifier(vanilla=True):
     inputs = layers.Input(shape=INPUT_SHAPE)
     # Augment data.
     augmented = data_augmentation(inputs)
