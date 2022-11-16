@@ -31,12 +31,12 @@ if __name__ == "__main__":
     # Model loading
     # FER_VT = SimpleViT(image_size=img_size, patch_size=8, num_classes=num_classes, dim=1024, depth=6, heads=16, mlp_dim=4096).to(device)
     FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=4096, num_heads=16, num_layers=24,
-                 n_classes=num_classes, dropout_rate=0.1, at_d_r=0.1).to(device)
+                 n_classes=num_classes, dropout_rate=0.25, at_d_r=0.15).to(device)
     # FER_VT = MyViT((1, 48, 48), n_patches=8, n_blocks=4, hidden_d=1280, n_heads=16, out_d=num_classes).to(device)
     # FER_VT = resnet18_at(num_classes=7, at_type=0).to(device)
 
     # Hyper-parameters
-    wd = 0.001
+    wd = 0.01
     criterion = nn.CrossEntropyLoss()
     optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
     # optimizer = SGDW(FER_VT.parameters(), lr=0.001, momentum=9, weight_decay=wd)
