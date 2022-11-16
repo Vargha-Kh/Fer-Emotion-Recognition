@@ -8,7 +8,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     std = [0.229, 0.224, 0.225]
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
-         # transforms.Grayscale(),
+         transforms.Grayscale(num_output_channels=3),
          transforms.RandomRotation(0.3),
          transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
@@ -16,7 +16,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
 
     transform_val = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
-         # transforms.Grayscale(),
+         transforms.Grayscale(num_output_channels=3),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
