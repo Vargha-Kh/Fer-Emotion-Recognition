@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # print("LR: ", lr_finder)
 
     # lr_scheduler = torch.optim.lr_scheduler.CyclicLR(optimizer, 0.001, 0.01)
-    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.1,
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.0001,
                                                                         last_epoch=- 1, verbose=True)
     # FER_VT.load_state_dict(torch.load('./model/best.pth'))
     reduce_on_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=15, verbose=True)
