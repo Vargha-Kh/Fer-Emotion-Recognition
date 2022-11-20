@@ -9,8 +9,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(num_output_channels=3),
-         transforms.RandomRotation(0.3),
-         transforms.RandomHorizontalFlip(),
+         # transforms.RandomRotation(0.3),
+         # transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
