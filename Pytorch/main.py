@@ -9,7 +9,7 @@ from torch.optim import Adam, AdamW, SGD
 from VIT import MyViT
 from VITT import VIT
 import math
-from vit_pytorch import SimpleViT
+
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
@@ -25,16 +25,15 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataset(directory="./fer2013", batch_size=batch_size, img_size=img_size)
 
     # Model loading
-    FER_VT = SimpleViT(image_size=img_size, patch_size=8, num_classes=num_classes, dim=1024, depth=4, heads=16,
-                       mlp_dim=2048).to(device)
-    # FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=2048, num_heads=16, num_layers=24,
-    #              n_classes=num_classes, dropout_rate=0.15, at_d_r=0.1).to(device)
+    FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=2048, num_heads=8, num_layers=24,
+                 n_classes=num_classes, dropout_rate=0.25, at_d_r=0.1).to(device)
     # FER_VT = MyViT((1, 48, 48), n_patches=8, n_blocks=4, hidden_d=1280, n_heads=16, out_d=num_classes).to(device)
 
     # Hyper-parameters
     wd = 0.01
     criterion = nn.CrossEntropyLoss()
     optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
+
     # exp_lr = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999, verbose=True)
     # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.0001,
     #                                                                     last_epoch=- 1, verbose=True)
