@@ -22,7 +22,7 @@ torch.cuda.empty_cache()
 if __name__ == "__main__":
     num_classes = 7
     augmentation = True
-    batch_size = 256
+    batch_size = 512
     num_epochs = 300
     img_size = 48
     # Data Prepare
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # Hyper-parameters
     wd = 0.01
     criterion = nn.CrossEntropyLoss()
-    optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
+    optimizer = Adam(FER_VT.parameters(), lr=0.001, weight_decay=wd)
     # optimizer = SGDW(FER_VT.parameters(), lr=0.001, momentum=9, weight_decay=wd)
     # exp_lr = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999, verbose=True)
     # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
