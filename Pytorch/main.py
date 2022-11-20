@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # Hyper-parameters
     wd = 0.01
     criterion = nn.CrossEntropyLoss()
-    optimizer = Adam(FER_VT.parameters(), lr=0.001, weight_decay=wd)
+    optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
     # optimizer = SGDW(FER_VT.parameters(), lr=0.001, momentum=9, weight_decay=wd)
     # exp_lr = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999, verbose=True)
     # scheduler = torch.optim.lr_scheduler.LambdaLR(optimizer,
