@@ -25,7 +25,7 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataset(directory="./fer2013", batch_size=batch_size, img_size=img_size)
 
     # Model loading
-    FER_VT = SimpleViT(image_size=(3, 48, 48), patch_size=8, num_classes=num_classes, dim=1024, depth=4, heads=16,
+    FER_VT = SimpleViT(image_size=img_size, patch_size=8, num_classes=num_classes, dim=1024, depth=4, heads=16,
                        mlp_dim=2048).to(device)
     # FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=2048, num_heads=16, num_layers=24,
     #              n_classes=num_classes, dropout_rate=0.15, at_d_r=0.1).to(device)
