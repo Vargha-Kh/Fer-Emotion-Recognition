@@ -17,7 +17,7 @@ torch.cuda.empty_cache()
 if __name__ == "__main__":
     num_classes = 7
     augmentation = True
-    batch_size = 512
+    batch_size = 256
     num_epochs = 300
     img_size = 224
     # Data Prepare
