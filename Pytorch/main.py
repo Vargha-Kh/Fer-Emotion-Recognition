@@ -24,10 +24,10 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataset(directory="./fer2013", batch_size=batch_size, img_size=img_size)
 
     # Model loading
-    FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=2048, num_heads=8, num_layers=24,
-                 n_classes=num_classes, dropout_rate=0.25, at_d_r=0.25).to(device)
+    # FER_VT = VIT(img_size=(3, 48, 48), patch_size=(8, 8), emb_dim=1024, mlp_dim=2048, num_heads=8, num_layers=24,
+    #              n_classes=num_classes, dropout_rate=0.25, at_d_r=0.25).to(device)
     # FER_VT = MyViT((1, 48, 48), n_patches=8, n_blocks=4, hidden_d=1280, n_heads=16, out_d=num_classes).to(device)
-    # FER_VT = FERVT.FERVT(device)
+    FER_VT = FERVT.FERVT(device)
 
     # Hyper-parameters
     wd = 0.1
