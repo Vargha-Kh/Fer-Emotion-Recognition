@@ -21,7 +21,7 @@ class Backbone(nn.Module):
     def __init__(self):
         super(Backbone, self).__init__()
 
-        resnet = torchvision.models.resnet34(weights=ResNet34_Weights.DEFAULT)
+        resnet = torchvision.models.resnet34(pretrained=true)
         self.conv1 = resnet.conv1
         self.bn1 = resnet.bn1
         self.relu = resnet.relu
