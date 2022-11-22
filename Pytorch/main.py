@@ -19,7 +19,7 @@ if __name__ == "__main__":
     augmentation = True
     batch_size = 512
     num_epochs = 300
-    img_size = 48
+    img_size = 224
     # Data Prepare
     train_loader, val_loader = get_dataset(directory="./fer2013", batch_size=batch_size, img_size=img_size)
 
