@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # exp_lr = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.999, verbose=True)
     # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.0001,
     #                                                                     last_epoch=- 1, verbose=True)
-    FER_VT.load_state_dict(torch.load('./model/best.pth'))
+    # FER_VT.load_state_dict(torch.load('./model/best.pth'))
     reduce_on_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', patience=8, verbose=True)
     # optimizer = Lookahead( optimizer, alpha= 0.6 , k = 10)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.2)
