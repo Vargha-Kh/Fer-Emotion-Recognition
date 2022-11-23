@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import imgaug.augmenters as iaa
+import numpy as np
 
 
 def augmentation(data_dir):
