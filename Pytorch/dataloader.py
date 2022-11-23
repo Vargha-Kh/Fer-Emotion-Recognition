@@ -10,7 +10,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     std = [0.229, 0.224, 0.225]
 
     torchvision_transform = transforms.Compose([
-        A.Resize((img_size, img_size)),
+        A.Resize(img_size, img_size),
         A.toRGB(),
         A.RandomCrop(8),
         A.HorizontalFlip(),
