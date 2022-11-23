@@ -20,13 +20,12 @@ def augmentation(data_dir):
     ])
     train_transforms = transforms.Compose([transforms.Resize((48, 48))])
     images = datasets.ImageFolder(data_dir, transform=train_transforms)
-    clls = datasets.ImageFolder(data_dir).class_to_idx
+    classes = datasets.ImageFolder(data_dir).class_to_idx
     for img in images:
         img_ = list(img)
-        for name, indx in clls.items():
-            if s in aug_dict[name]:
-                tf = transforms.Compose([s.augment_image, transforms.ToTensor()])
-                tf(np.array(img_[0]))
+        for _ in classes:
+            tf = transforms.Compose([s.augment_image, transforms.ToTensor()])
+            tf(np.array(img_[0]))
     augmented.append(images)
     return augmented
 
