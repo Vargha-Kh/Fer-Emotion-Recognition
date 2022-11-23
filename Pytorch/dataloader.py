@@ -3,7 +3,7 @@ from torchvision import transforms, datasets
 from torch.utils.data import DataLoader
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
-from albumentations.augmentations.transforms import ToRGB
+# from albumentations.augmentations.transforms import ToRGB
 
 
 def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
@@ -12,7 +12,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
 
     torchvision_transform = transforms.Compose([
         A.Resize(img_size, img_size),
-        ToRGB(),
+        # ToRGB(),
         A.RandomCrop(8),
         A.HorizontalFlip(),
         A.RandomBrightnessContrast(p=0.2),
