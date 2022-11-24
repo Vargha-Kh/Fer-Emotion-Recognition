@@ -61,8 +61,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
-    train_data = ImageDataset(directory + '/train', transform=train_transform)
-    val_data = ImageDataset(directory + '/val', transform=train_transform)
+    train_data = ImageDataset(os.path.join(directory, '/train'), transform=train_transform)
+    val_data = ImageDataset(os.path.join(directory + '/val'), transform=train_transform)
 
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
