@@ -1,4 +1,5 @@
 import torch
+import warnings
 import torch.nn as nn
 from dataloader import get_dataset
 from train import Trainer
@@ -8,6 +9,7 @@ import numpy as np
 from torch.optim import AdamW
 import math
 
+warnings.filterwarnings("ignore")
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 os.environ['CUDA_LAUNCH_BLOCKING'] = "1"
 torch.cuda.empty_cache()
@@ -29,7 +31,7 @@ if __name__ == "__main__":
     wd = 0.1
     class_weight = [1.02660468, 9.40661861, 1.00104606, 0.56843877, 0.84912748, 1.29337298, 0.82603942, ]
     class_weights = torch.FloatTensor(np.array(class_weight)).to(device)
-    criterion = nn.CrossEntropyLoss(class_weights)
+    criterion = nn.CrossEntropyLoss()
     optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
 
     # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.0001,

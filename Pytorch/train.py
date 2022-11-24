@@ -19,19 +19,19 @@ class Trainer:
         for inputs, labels in ds_train:
             inputs = inputs.to(device).float()
             labels = labels.type(torch.DoubleTensor).to(device)
-            # with torch.cuda.amp.autocast():
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
+            with torch.cuda.amp.autocast():
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
             optimizer.zero_grad()
-            # self.scaler.scale(loss).backward()
-            # self.scaler.step(optimizer)
-            # self.scaler.update()
+            self.scaler.scale(loss).backward()
+            self.scaler.step(optimizer)
+            self.scaler.update()
             loss_ += loss.item()
             _, preds = torch.max(outputs, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
             num_image += labels.size(0)
-            loss.backward()
-            optimizer.step()
+            # loss.backward()
+            # optimizer.step()
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
 
