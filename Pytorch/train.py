@@ -18,21 +18,20 @@ class Trainer:
         num_image = 0
         for inputs, labels in ds_train:
             inputs = inputs.to(device).float()
-            labels = labels.to(device)
             labels = labels.type(torch.DoubleTensor).to(device)
-            with torch.cuda.amp.autocast():
-                logit = model(inputs)
-                loss = criterion(logit, labels)
+            # with torch.cuda.amp.autocast():
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
             optimizer.zero_grad()
-            self.scaler.scale(loss).backward()
-            self.scaler.step(optimizer)
-            self.scaler.update()
+            # self.scaler.scale(loss).backward()
+            # self.scaler.step(optimizer)
+            # self.scaler.update()
             loss_ += loss.item()
-            _, preds = torch.max(logit, 1)
+            _, preds = torch.max(outputs, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
             num_image += labels.size(0)
-            # loss.backward()
-            # optimizer.step()
+            loss.backward()
+            optimizer.step()
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
 
@@ -47,10 +46,10 @@ class Trainer:
             for inputs, labels in ds_valid:
                 inputs = inputs.to(device).float()
                 labels = labels.type(torch.DoubleTensor).to(device)
-                logit = model(inputs)
-                loss = criterion(logit, labels)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
                 loss_ += loss.item()
-                _, preds = torch.max(logit.data, 1)
+                _, preds = torch.max(outputs.data, 1)
                 correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
                 num_image += labels.size(0)
         acc = 100 * correct_count / num_image
@@ -69,13 +68,13 @@ class Trainer:
             self.writer.add_scalar("train_accuracy", total_acc_train, epoch)
             train_losses.append(total_loss_train)
             train_accs.append(total_acc_train)
-            with torch.no_grad():
-                model, total_loss_valid, total_acc_valid = self.valid(ds_valid, model, criterion, device)
-                valid_losses.append(total_loss_valid)
-                valid_accs.append(total_acc_valid)
-                self.writer.add_scalar("validation_loss", total_loss_valid, epoch)
-                self.writer.add_scalar("validation_accuracy", total_acc_valid, epoch)
-                self.writer.add_scalar('LR', optimizer.param_groups[0]['lr'], epoch)
+
+            model, total_loss_valid, total_acc_valid = self.valid(ds_valid, model, criterion, device)
+            valid_losses.append(total_loss_valid)
+            valid_accs.append(total_acc_valid)
+            self.writer.add_scalar("validation_loss", total_loss_valid, epoch)
+            self.writer.add_scalar("validation_accuracy", total_acc_valid, epoch)
+            self.writer.add_scalar('LR', optimizer.param_groups[0]['lr'], epoch)
 
             scores = {'epoch': epoch, 'acc': total_acc_train, 'loss': total_loss_train, 'val_acc': total_acc_valid,
                       'val_loss': total_loss_valid, 'LR': optimizer.param_groups[0]['lr']}
