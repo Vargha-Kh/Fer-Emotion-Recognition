@@ -9,22 +9,24 @@ class Trainer:
         self.writer = SummaryWriter(logdir)
         self.csv_log_dir = csv_log_dir
         self.model_checkpoint_dir = model_checkpoint_dir
+        self.scaler = torch.cuda.amp.GradScaler()
 
     def train(self, ds_train, model, criterion, optimizer, device):
         model.train()
         loss_ = 0
         correct_count = 0
         num_image = 0
-        for x, y_true in ds_train:
-            optimizer.zero_grad()
-            X = x.to(device)
-            X = X.float()
-            labels = y_true.to(device)
+        for inputs, labels in ds_train:
+            inputs = inputs.to(device).float()
+            labels = labels.to(device)
             labels = labels.type(torch.DoubleTensor).to(device)
             with torch.cuda.amp.autocast():
-                logit = model(X)
+                logit = model(inputs)
                 loss = criterion(logit, labels)
             optimizer.zero_grad()
+            self.scaler.scale(loss).backward()
+            self.scaler.step(optimizer)
+            self.scaler.update()
             loss_ += loss.item()
             _, preds = torch.max(logit, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
@@ -41,19 +43,16 @@ class Trainer:
         loss_ = 0
         correct_count = 0
         num_image = 0
-        for x, y_true in ds_valid:
-            X = x.to(device)
-            X = X.float()
-            labels = y_true.to(device)
-            labels = labels.type(torch.DoubleTensor).to(device)
-            logit = model(X)
-            loss = criterion(logit, labels)
-            loss_ += loss.item()
-            _, preds = torch.max(logit.data, 1)
-            correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
-            num_image += labels.size(0)
-            # loss.backward()
-            # optimizer.step()
+        with torch.no_grad():
+            for inputs, labels in ds_valid:
+                inputs = inputs.to(device).float()
+                labels = labels.type(torch.DoubleTensor).to(device)
+                logit = model(inputs)
+                loss = criterion(logit, labels)
+                loss_ += loss.item()
+                _, preds = torch.max(logit.data, 1)
+                correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
+                num_image += labels.size(0)
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
         return model, loss, acc
