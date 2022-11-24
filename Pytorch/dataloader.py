@@ -19,7 +19,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, idx):
         image_filepath = self.images_filepaths[idx]
-        image = cv2.imread(image_filepath)
+        image = cv2.imread(image_filepath, cv2.IMREAD_UNCHANGED)
         print(image_filepath)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = self.transform(image=image)["image"]
@@ -55,7 +55,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
-    train_data = ImageDataset(os.path.join(directory, '/train'), transform=train_transform)
+    train_path = "./fer2013/train"
+    train_data = ImageDataset(train_path, transform=train_transform)
     val_data = ImageDataset(os.path.join(directory, '/val'), transform=train_transform)
 
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
