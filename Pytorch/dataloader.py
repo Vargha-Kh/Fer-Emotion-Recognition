@@ -62,7 +62,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
-    EMOTION_ID2NAME = {0: 'Angry', 1: 'Disgust', 2: 'Fear', 3: 'Happy', 4: 'Sad', 5: 'Surprise', 6: 'Neutral'}
+    EMOTION_ID2NAME = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'sad', 5: 'surprise', 6: 'neutral'}
     EMOTION_NAME2ID = {v: k for k, v in EMOTION_ID2NAME.items()}
 
     train_address, train_labels = crawl_directory_dataset(directory + '/train',
