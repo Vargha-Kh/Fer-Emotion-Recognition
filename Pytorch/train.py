@@ -1,7 +1,6 @@
 import torch
 from torch.utils.tensorboard import SummaryWriter
 from callback import EarlyStopping, Model_checkpoint, CSV_log
-from tqdm import tqdm
 
 
 class Trainer:
@@ -13,47 +12,43 @@ class Trainer:
 
     def train(self, ds_train, model, criterion, optimizer, device):
         model.train()
-        loss_tr, correct_count, n_samples = 0.0, 0.0, 0.0
-
-        for i, data in tqdm(enumerate(ds_train), total=len(ds_train), leave=False):
-            inputs, labels = data
-            inputs, labels = inputs.to(device), labels.to(device)
-
-            # Train with FP16
-            with torch.cuda.amp.autocast():
-                outputs = model(inputs)
-                loss = criterion(outputs, labels)
-            optimizer.step()
-            loss.backward()
+        loss_ = 0
+        train_acc = 0
+        num_image = 0
+        for x, y_true in ds_train:
             optimizer.zero_grad()
-            loss_tr += loss.item()
-            _, preds = torch.max(outputs.data, dim=1)
-            correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
-            n_samples += labels.size(0)
+            X = x.to(device)
+            Y = y_true.to(device)
+            logit = model(X)
+            loss = criterion(logit, Y)
+            loss_ += loss.item() * x.size(0)
+            Max, num = torch.max(logit, 1)
+            train_acc += torch.sum(num == Y)
+            num_image += x.size(0)
+            loss.backward()
+            optimizer.step()
+        total_loss_train = loss_ / num_image
+        total_acc_train = train_acc / num_image
 
-        acc = 100 * correct_count / n_samples
-        loss = loss_tr / n_samples
-
-        return model, loss, acc
+        return model, total_loss_train, total_acc_train.item()
 
     def valid(self, ds_valid, model, criterion, device):
-        net = model.eval()
-        with torch.no_grad():
-            loss_, correct_count, n_samples = 0.0, 0.0, 0.0
-            for data in tqdm(ds_valid, total=len(ds_valid), leave=False):
-                inputs, labels = data
-                inputs, labels = inputs.to(device, non_blocking=True), labels.to(device,
-                                                                                 non_blocking=True)
-                outputs = net(inputs)
-                loss = criterion(outputs, labels)
-                loss_ += loss.item()
-                _, preds = torch.max(outputs.data, 1)
-                correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
-                n_samples += labels.size(0)
-
-        acc = 100 * correct_count / n_samples
-        loss = loss_ / n_samples
-        return model, loss, acc
+        model.eval()
+        loss_ = 0
+        valid_acc = 0
+        num_image = 0
+        for x, y_true in ds_valid:
+            X = x.to(device)
+            Y = y_true.to(device)
+            logit = model(X)
+            loss = criterion(logit, Y)
+            loss_ += loss.item() * x.size(0)
+            Max, num = torch.max(logit, 1)
+            valid_acc += torch.sum(num == Y)
+            num_image += x.size(0)
+        total_loss_valid = loss_ / num_image
+        total_acc_valid = valid_acc / num_image
+        return model, total_loss_valid, total_acc_valid.item()
 
     def training(self, model, ds_train, ds_valid, criterion, optimizer, reduce_on_plateau, exp_lr, device, epochs):
         train_losses = []
@@ -90,6 +85,5 @@ class Trainer:
             if early_stopping.Early_Stopping(monitor='val_acc', metrics=metrics, patience=30, verbose=True):
                 break
             print("Epoch:", epoch + 1, "- Train Loss:", total_loss_train, "- Train Accuracy:", total_acc_train,
-                  "- Validation Loss:", total_loss_valid, "- Validation Accuracy:", total_acc_valid, "- LR:",
-                  optimizer.param_groups[0]['lr'])
+                  "- Validation Loss:", total_loss_valid, "- Validation Accuracy:", total_acc_valid, "- LR:", optimizer.param_groups[0]['lr'])
         return model, optimizer, train_losses, valid_losses
