@@ -4,6 +4,24 @@ from torch.utils.data import DataLoader
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import numpy as np
+import cv2
+
+
+class ImageDataset(Dataset):
+    def __init__(self, images_filepaths, transform=None):
+        self.images_filepaths = images_filepaths
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.images_filepaths)
+
+    def __getitem__(self, idx):
+        image_filepath = self.images_filepaths[idx]
+        image = cv2.imread(image_filepath)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        if self.transform is not None:
+            image = self.transform(image=image)["image"]
+        return image
 
 
 def get_augmentation(aug_name, img_h, img_w, mean, std, **kwargs):
@@ -42,8 +60,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
-    train_data = datasets.ImageFolder(directory + '/train', transform=train_transform)
-    val_data = datasets.ImageFolder(directory + '/val', transform=train_transform)
+    train_data = ImageDataset(directory + '/train', transform=train_transform)
+    val_data = ImageDataset(directory + '/val', transform=train_transform)
 
     train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
     val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
