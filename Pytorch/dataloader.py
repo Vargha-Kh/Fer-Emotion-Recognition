@@ -32,11 +32,13 @@ class CustomDataset(Dataset):
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
+        image = augmented['image']
         # Convert numpy array to PIL Image
         img = Image.fromarray(augmented['image'])
+
         label = torch.tensor(self.labels[idx])
         label = F.one_hot(label, num_classes=self.n_classes)
-        sample = (img, label)
+        sample = (image, label)
 
         return sample
 
