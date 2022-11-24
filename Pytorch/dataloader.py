@@ -23,11 +23,15 @@ class CustomDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
         img_address = self.images[idx]
-        img = read_image(img_address)#[..., ::-1]  # BGR2RGB
-        img = self.transform(image=img)['image']
+        img = read_image(img_address)
+        # img = self.transform(image=img)['image']
+        # Convert PIL image to numpy array
+        image_np = np.array(img)
+        # Apply transformations
+        augmented = self.transform(image=image_np)
+        # Convert numpy array to PIL Image
+        img = Image.fromarray(augmented['image'])
         label = torch.tensor(self.labels[idx])
         label = F.one_hot(label, num_classes=self.n_classes)
         sample = (img, label)
