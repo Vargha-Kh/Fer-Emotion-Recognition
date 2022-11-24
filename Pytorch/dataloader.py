@@ -19,7 +19,7 @@ class ImageDataset(Dataset):
     def __getitem__(self, idx):
         image_filepath = self.images_filepaths[idx]
         image = cv2.imread(image_filepath)
-        image = cv2.cvtColor(image)
+        # image = cv2.cvtColor(image)
         if self.transform is not None:
             image = self.transform(image=image)["image"]
         return image
