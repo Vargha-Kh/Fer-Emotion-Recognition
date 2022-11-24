@@ -15,9 +15,7 @@ class Trainer:
         model.train()
         loss_tr, correct_count, n_samples = 0.0, 0.0, 0.0
 
-        for i, data in tqdm(enumerate(ds_train), total=len(ds_train), leave=False,
-                            desc=color_str(f"Epoch: {epoch}/{config.epochs} Training", color='blue'), position=0,
-                            colour='blue'):
+        for i, data in tqdm(enumerate(ds_train), total=len(ds_train), leave=False):
             inputs, labels = data
             inputs, labels = inputs.to(device), labels.to(device)
 
@@ -42,9 +40,7 @@ class Trainer:
         net = model.eval()
         with torch.no_grad():
             loss_, correct_count, n_samples = 0.0, 0.0, 0.0
-            for data in tqdm(ds_valid, total=len(ds_valid), leave=False,
-                             desc=color_str(f"Epoch {epoch}/{config.epochs} Evaluation", color='blue'),
-                             position=0, colour='blue'):
+            for data in tqdm(ds_valid, total=len(ds_valid), leave=False):
                 inputs, labels = data
                 inputs, labels = inputs.to(device, non_blocking=True), labels.to(device,
                                                                                  non_blocking=True)
