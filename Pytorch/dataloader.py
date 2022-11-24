@@ -25,10 +25,9 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         img_address = self.images[idx]
-        # img = read_image(img_address)
+        img = read_image(img_address)
         # img = self.transform(image=img)['image']
-        # Convert PIL image to numpy array
-        img = Image.open(img_address)
+        img = cv2.cvtColor(img_address, cv2.COLOR_GRAY2RGB)
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
