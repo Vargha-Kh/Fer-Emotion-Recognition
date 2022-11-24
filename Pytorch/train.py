@@ -29,8 +29,8 @@ class Trainer:
             _, preds = torch.max(logit, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
             num_image += labels.size(0)
-            loss.backward()
-            optimizer.step()
+            # loss.backward()
+            # optimizer.step()
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
 
@@ -52,8 +52,8 @@ class Trainer:
             _, preds = torch.max(logit.data, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
             num_image += labels.size(0)
-            loss.backward()
-            optimizer.step()
+            # loss.backward()
+            # optimizer.step()
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
         return model, loss, acc
