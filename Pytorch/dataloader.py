@@ -8,10 +8,11 @@ from torch.utils.data import Dataset
 import cv2
 import os
 from deep_utils import crawl_directory_dataset
+import torch.nn.functional as F
 
 
 class CustomDataset(Dataset):
-    def __init__(self, images, labels, transform=None, n_classes=7, logger=None, verbose=1):
+    def __init__(self, images, labels, transform=None, n_classes=7):
         self.images = images
         self.labels = labels
         self.n_classes = n_classes
