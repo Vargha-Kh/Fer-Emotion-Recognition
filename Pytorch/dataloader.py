@@ -25,10 +25,10 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         img_address = self.images[idx]
-        img = read_image(img_address)
+        # img = read_image(img_address)
         # img = self.transform(image=img)['image']
         # Convert PIL image to numpy array
-        # img = Image.open(img_address).convert('RGB')
+        img = Image.open(img_address).convert('RGB')
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
@@ -79,6 +79,9 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     val_address, val_labels = crawl_directory_dataset(directory + '/val', label_map_dict=EMOTION_NAME2ID)
     train_dataset = CustomDataset(train_address, train_labels, transform=train_transform)
     val_dataset = CustomDataset(val_address, val_labels, transform=train_transform)
+
+    # train_dataset = datasets.ImageFolder(dataset_dir + '/train', transform=transform_train)
+    # val_dataset = datasets.ImageFolder(dataset_dir + '/val', transform=transform_val)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, pin_memory=True)
