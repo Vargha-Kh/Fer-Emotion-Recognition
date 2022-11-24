@@ -28,7 +28,7 @@ class CustomDataset(Dataset):
         # img = read_image(img_address)
         # img = self.transform(image=img)['image']
         # Convert PIL image to numpy array
-        img = Image.open(img_address).convert('RGB')
+        img = Image.open(img_address)
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
