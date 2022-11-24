@@ -16,7 +16,6 @@ class CustomDataset(Dataset):
         self.labels = labels
         self.n_classes = n_classes
         self.transform = transform
-        log_print(logger, f"Successfully created {self.__class__.__name__}, samples: {len(self)}", verbose=verbose)
 
     def __len__(self):
         return len(self.images)
