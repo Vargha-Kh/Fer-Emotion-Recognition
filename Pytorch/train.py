@@ -13,30 +13,32 @@ class Trainer:
     def train(self, ds_train, model, criterion, optimizer, device):
         model.train()
         loss_ = 0
-        train_acc = 0
+        correct_count = 0
         num_image = 0
         for x, y_true in ds_train:
             optimizer.zero_grad()
             X = x.to(device)
             labels = y_true.to(device)
             labels = labels.type(torch.DoubleTensor).to(device)
-            logit = model(X)
-            loss = criterion(logit, labels)
-            loss_ += loss.item() * x.size(0)
-            Max, num = torch.max(logit, 1)
-            train_acc += torch.sum(num == labels)
-            num_image += x.size(0)
+            with torch.cuda.amp.autocast():
+                logit = model(X)
+                loss = criterion(logit, labels)
+            optimizer.zero_grad()
+            loss_ += loss.item()
+            _, preds = torch.max(logit, 1)
+            correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
+            num_image += labels.size(0)
             loss.backward()
             optimizer.step()
-        total_loss_train = loss_ / num_image
-        total_acc_train = train_acc / num_image
+        acc = 100 * correct_count / num_image
+        loss = loss_ / num_image
 
-        return model, total_loss_train, total_acc_train.item()
+        return model, loss, acc
 
     def valid(self, ds_valid, model, criterion, device):
         model.eval()
         loss_ = 0
-        valid_acc = 0
+        correct_count = 0
         num_image = 0
         for x, y_true in ds_valid:
             X = x.to(device)
@@ -45,13 +47,15 @@ class Trainer:
             labels = labels.type(torch.DoubleTensor).to(device)
             logit = model(X)
             loss = criterion(logit, labels)
-            loss_ += loss.item() * x.size(0)
-            Max, num = torch.max(logit, 1)
-            valid_acc += torch.sum(num == labels)
-            num_image += x.size(0)
-        total_loss_valid = loss_ / num_image
-        total_acc_valid = valid_acc / num_image
-        return model, total_loss_valid, total_acc_valid.item()
+            loss_ += loss.item()
+            _, preds = torch.max(logit.data, 1)
+            correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
+            num_image += labels.size(0)
+            loss.backward()
+            optimizer.step()
+        acc = 100 * correct_count / num_image
+        loss = loss_ / num_image
+        return model, loss, acc
 
     def training(self, model, ds_train, ds_valid, criterion, optimizer, reduce_on_plateau, exp_lr, device, epochs):
         train_losses = []
