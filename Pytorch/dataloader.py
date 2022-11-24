@@ -21,7 +21,7 @@ class ImageDataset(Dataset):
         image_filepath = self.images_filepaths[idx]
         image = cv2.imread(image_filepath, cv2.IMREAD_UNCHANGED)
         print(image_filepath)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = self.transform(image=image)["image"]
         return image
 
