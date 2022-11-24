@@ -29,9 +29,9 @@ class CustomDataset(Dataset):
         # img = self.transform(image=img)['image']
         img = cv2.imread(img_address, cv2.COLOR_BGR2RGB)
         # img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
-        image_np = np.array(img)
+        # image_np = np.array(img)
         # Apply transformations
-        augmented = self.transform(image=image_np)
+        augmented = self.transform(image=img)
         image = augmented['image']
         # Convert numpy array to PIL Image
         img = Image.fromarray(augmented['image'])
