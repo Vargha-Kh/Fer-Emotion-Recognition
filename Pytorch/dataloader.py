@@ -25,10 +25,10 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         img_address = self.images[idx]
-        # img = read_image(img_address)
+        img = read_image(img_address)
         # img = self.transform(image=img)['image']
         # Convert PIL image to numpy array
-        img = Image.open(img_address).convert('RGB')
+        # img = Image.open(img_address).convert('RGB')
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
@@ -49,7 +49,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
         [
             A.Resize(height=img_size, width=img_size),
             A.HorizontalFlip(p=0.5),
-            A.ToGray(always_apply=True, p=1),
+            # A.ToGray(always_apply=True, p=1),
+            A.ToRGB(always_apply=True, p=1),
             A.Normalize(mean=mean, std=std, max_pixel_value=255.0),
             ToTensorV2()
         ])
