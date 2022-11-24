@@ -51,7 +51,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
             A.HorizontalFlip(p=0.5),
             A.ToGray(always_apply=True, p=1),
             # A.ToRGB(always_apply=True, p=1),
-            A.Normalize(mean=mean, std=std),
+            A.Normalize(mean=mean, std=std, max_pixel_value=255.0),
             ToTensorV2()
         ])
 
