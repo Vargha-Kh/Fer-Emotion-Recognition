@@ -25,7 +25,7 @@ class CustomDataset(Dataset):
         if torch.is_tensor(idx):
             idx = idx.tolist()
         img_address = self.images[idx]
-        img = cv2.imread(img_address)[..., ::-1]  # BGR2RGB
+        img = cv2.imread(img_address)#[..., ::-1]  # BGR2RGB
         img = self.transform(image=img)['image']
         label = torch.tensor(self.labels[idx])
         label = F.one_hot(label, num_classes=self.n_classes)
