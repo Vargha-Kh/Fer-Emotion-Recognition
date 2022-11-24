@@ -24,7 +24,7 @@ class Trainer:
             loss = criterion(logit, labels)
             loss_ += loss.item() * x.size(0)
             Max, num = torch.max(logit, 1)
-            train_acc += torch.sum(num == Y)
+            train_acc += torch.sum(num == labels)
             num_image += x.size(0)
             loss.backward()
             optimizer.step()
@@ -47,7 +47,7 @@ class Trainer:
             loss = criterion(logit, labels)
             loss_ += loss.item() * x.size(0)
             Max, num = torch.max(logit, 1)
-            valid_acc += torch.sum(num == Y)
+            valid_acc += torch.sum(num == labels)
             num_image += x.size(0)
         total_loss_valid = loss_ / num_image
         total_acc_valid = valid_acc / num_image
