@@ -27,7 +27,7 @@ def augmentation(data_dir):
         for _ in classes:
             tf = transforms.Compose([s.augment_image, transforms.ToTensor()])
             tf(np.array(img_[0]))
-    augmented.append(images)
+    augmented.append(tf)
     return augmented
 
 
