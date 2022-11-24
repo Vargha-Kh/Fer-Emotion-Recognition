@@ -10,20 +10,26 @@ import os
 
 
 class ImageDataset(Dataset):
-    def __init__(self, images, transform=None):
-        self.images = images
+    def __init__(self, images_filepaths, transform=None):
+        self.images_filepaths = images_filepaths
         self.transform = transform
 
     def __len__(self):
-        return len(self.images)
+        return len(self.images_filepaths)
 
     def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-        img_address = self.images[idx]
-        image = cv2.imread(img_address)[..., ::-1]
-        image = self.transform(image=image)['image']
+        image_filepath = self.images_filepaths[idx]
+        image = cv2.imread(image_filepath)
+        image = cv2.cvtColor(image, cv2.BGR2RGB)
+        image = self.transform(image=image)["image"]
         return image
+
+
+def get_augmentation(aug_name, img_h, img_w, mean, std, **kwargs):
+    augmentations = dict(
+        normal=get_normal_aug,
+    )
+    return augmentations[aug_name](img_h=img_h, img_w=img_w, mean=mean, std=std, **kwargs)
 
 
 def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
