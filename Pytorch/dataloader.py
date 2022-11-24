@@ -11,6 +11,7 @@ from PIL import Image
 from deep_utils import crawl_directory_dataset
 import torch.nn.functional as F
 from torchvision.io import read_image
+from skimage import io
 
 
 class CustomDataset(Dataset):
@@ -27,9 +28,10 @@ class CustomDataset(Dataset):
         img_address = self.images[idx]
 
         # img = self.transform(image=img)['image']
-        img = cv2.imread(img_address)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # img = cv2.imread(img_address)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # img = read_image(img_address)
+        img = io.imread(img_address)
         # image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=img)
