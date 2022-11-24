@@ -20,16 +20,10 @@ class ImageDataset(Dataset):
     def __getitem__(self, idx):
         image_filepath = self.images_filepaths[idx]
         image = cv2.imread(image_filepath)
-        # image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        print(image_filepath)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = self.transform(image=image)["image"]
         return image
-
-
-def get_augmentation(aug_name, img_h, img_w, mean, std, **kwargs):
-    augmentations = dict(
-        normal=get_normal_aug,
-    )
-    return augmentations[aug_name](img_h=img_h, img_w=img_w, mean=mean, std=std, **kwargs)
 
 
 def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
@@ -62,8 +56,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.Normalize(mean, std)])
 
     train_data = ImageDataset(os.path.join(directory, '/train'), transform=train_transform)
-    val_data = ImageDataset(os.path.join(directory + '/val'), transform=train_transform)
+    val_data = ImageDataset(os.path.join(directory, '/val'), transform=train_transform)
 
-    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True)
-    val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size)
+    train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
+    val_loader = torch.utils.data.DataLoader(val_data, batch_size=batch_size, pin_memory=True)
     return train_loader, val_loader,
