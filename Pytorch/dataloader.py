@@ -29,9 +29,10 @@ class CustomDataset(Dataset):
 
         # img = self.transform(image=img)['image']
         # img = cv2.imread(img_address)
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
         # img = read_image(img_address)
         img = io.imread(img_address)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=img)
