@@ -66,9 +66,9 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     EMOTION_ID2NAME = {0: 'Angry', 1: 'Disgust', 2: 'Fear', 3: 'Happy', 4: 'Sad', 5: 'Surprise', 6: 'Neutral'}
     EMOTION_NAME2ID = {v: k for k, v in EMOTION_ID2NAME.items()}
 
-    train_address, train_labels = crawl_directory_dataset(os.path.join(directory, '/train'),
+    train_address, train_labels = crawl_directory_dataset(directory + '/train',
                                                           label_map_dict=EMOTION_NAME2ID)
-    val_address, val_labels = crawl_directory_dataset(os.path.join(directory, '/val'), label_map_dict=EMOTION_NAME2ID)
+    val_address, val_labels = crawl_directory_dataset(directory + '/val', label_map_dict=EMOTION_NAME2ID)
     train_dataset = CustomDataset(train_address, train_labels, transform=train_transform)
     val_dataset = CustomDataset(val_address, val_labels, transform=train_transform)
 
