@@ -18,6 +18,7 @@ class Trainer:
         for x, y_true in ds_train:
             optimizer.zero_grad()
             X = x.to(device)
+            X = X.float()
             labels = y_true.to(device)
             labels = labels.type(torch.DoubleTensor).to(device)
             with torch.cuda.amp.autocast():
@@ -42,7 +43,7 @@ class Trainer:
         num_image = 0
         for x, y_true in ds_valid:
             X = x.to(device)
-            Y = y_true.to(device)
+            X = X.float()
             labels = y_true.to(device)
             labels = labels.type(torch.DoubleTensor).to(device)
             logit = model(X)
@@ -92,5 +93,6 @@ class Trainer:
             if early_stopping.Early_Stopping(monitor='val_acc', metrics=metrics, patience=30, verbose=True):
                 break
             print("Epoch:", epoch + 1, "- Train Loss:", total_loss_train, "- Train Accuracy:", total_acc_train,
-                  "- Validation Loss:", total_loss_valid, "- Validation Accuracy:", total_acc_valid, "- LR:", optimizer.param_groups[0]['lr'])
+                  "- Validation Loss:", total_loss_valid, "- Validation Accuracy:", total_acc_valid, "- LR:",
+                  optimizer.param_groups[0]['lr'])
         return model, optimizer, train_losses, valid_losses
