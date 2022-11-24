@@ -7,6 +7,7 @@ import numpy as np
 from torch.utils.data import Dataset
 import cv2
 import os
+from PIL import Image
 from deep_utils import crawl_directory_dataset
 import torch.nn.functional as F
 from torchvision.io import read_image
@@ -24,9 +25,10 @@ class CustomDataset(Dataset):
 
     def __getitem__(self, idx):
         img_address = self.images[idx]
-        img = read_image(img_address)
+        # img = read_image(img_address)
         # img = self.transform(image=img)['image']
         # Convert PIL image to numpy array
+        img = Image.open(img_address).convert('RGB')
         image_np = np.array(img)
         # Apply transformations
         augmented = self.transform(image=image_np)
