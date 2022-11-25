@@ -24,15 +24,15 @@ class Trainer:
             labels = labels.to(device)
             # with torch.cuda.amp.autocast():
             outputs = model(inputs)
-            loss = criterion(outputs.squeeze(1), labels.long())
+            loss = criterion(outputs, labels)
             num_image += inputs.size(0)
             loss_ += loss.item()
-            _, num = torch.max(outputs, 1)
+            _, num = torch.max(outputs.data, 1)
             train_acc += torch.sum(num == labels)
             loss.backward()
             optimizer.step()
 
-        total_loss_train = loss_ / num_image
+        total_loss_train = loss_ 
         total_acc_train = (train_acc / num_image).item()
 
         return model, total_loss_train, total_acc_train
@@ -50,7 +50,7 @@ class Trainer:
             labels = labels.to(device)
             num_image += inputs.size(0)
             outputs = model(inputs)
-            loss = criterion(outputs.squeeze(1), labels.long())
+            loss = criterion(outputs, labels)
             loss_ += loss.item()
             Max, num = torch.max(outputs, 1)
             valid_acc += torch.sum(num == labels)
@@ -65,7 +65,7 @@ class Trainer:
             #     accuracy = 100 * float(correct_count) / total_pred[classname]
             #     print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
 
-        total_loss_valid = loss_ / num_image
+        total_loss_valid = loss_
         total_acc_valid = (valid_acc / num_image).item()
         return model, total_loss_valid, total_acc_valid
 
