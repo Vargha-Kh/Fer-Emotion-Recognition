@@ -12,7 +12,6 @@ class Trainer:
         self.writer = SummaryWriter(logdir)
         self.csv_log_dir = csv_log_dir
         self.model_checkpoint_dir = model_checkpoint_dir
-        self.scaler = torch.cuda.amp.GradScaler()
 
     def train(self, ds_train, model, criterion, optimizer, device):
         model.train()
@@ -23,9 +22,9 @@ class Trainer:
             optimizer.zero_grad()
             inputs = inputs.to(device)
             labels = labels.to(device)
-            with torch.cuda.amp.autocast():
-                outputs = model(inputs)
-                loss = criterion(outputs, labels.long())
+            # with torch.cuda.amp.autocast():
+            outputs = model(inputs)
+            loss = criterion(outputs.squeeze(1), labels.long())
             loss.backward()
             optimizer.step()
             num_image += inputs.size(0)
@@ -52,7 +51,7 @@ class Trainer:
                 labels = labels.to(device)
                 num_image += labels.size(0)
                 outputs = model(inputs)
-                loss = criterion(outputs, labels.long())
+                loss = criterion(outputs.squeeze(1), labels.long())
                 loss_ += loss.item() * num_image
                 Max, num = torch.max(outputs, 1)
                 valid_acc += torch.sum(num == labels)
