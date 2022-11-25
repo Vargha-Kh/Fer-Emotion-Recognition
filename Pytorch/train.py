@@ -21,11 +21,11 @@ class Trainer:
         num_image = 0
         for inputs, labels in ds_train:
             optimizer.zero_grad()
-            inputs = inputs.to(device).float()
-            labels = labels.type(torch.DoubleTensor).to(device)
+            inputs = inputs.to(device)
+            labels = labels.to(device)
             with torch.cuda.amp.autocast():
                 outputs = model(inputs)
-                loss = criterion(outputs, labels)
+                loss = criterion(outputs, labels.long())
             loss.backward()
             optimizer.step()
             loss_ += loss.item()
@@ -49,14 +49,14 @@ class Trainer:
                 inputs = inputs.to(device)
                 labels = labels.to(device)
                 outputs = model(inputs)
+                loss = criterion(outputs, labels.long())
+                loss_ += loss.item()
+                _, preds = torch.max(outputs.data, 1)
                 _, predictions = torch.max(outputs, 1)
                 for label, prediction in zip(labels, predictions):
                     if label == prediction:
                         correct_pred[classes[label]] += 1
                     total_pred[classes[label]] += 1
-                loss = criterion(outputs, labels)
-                loss_ += loss.item()
-                _, preds = torch.max(outputs.data, 1)
                 correct_count += (preds == labels).sum().item()
                 num_image += labels.size(0)
         acc = 100 * correct_count / num_image
