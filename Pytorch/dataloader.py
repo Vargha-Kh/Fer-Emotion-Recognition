@@ -64,30 +64,26 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(num_output_channels=3),
-         transforms.RandomRotation(0.3),
-         transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
     transform_val = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(num_output_channels=3),
-         transforms.RandomRotation(0.3),
-         transforms.RandomHorizontalFlip(),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
-    EMOTION_ID2NAME = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'sad', 5: 'surprise', 6: 'neutral'}
-    EMOTION_NAME2ID = {v: k for k, v in EMOTION_ID2NAME.items()}
+    # EMOTION_ID2NAME = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'sad', 5: 'surprise', 6: 'neutral'}
+    # EMOTION_NAME2ID = {v: k for k, v in EMOTION_ID2NAME.items()}
+    #
+    # train_address, train_labels = crawl_directory_dataset(directory + '/train',
+    #                                                       label_map_dict=EMOTION_NAME2ID)
+    # val_address, val_labels = crawl_directory_dataset(directory + '/val', label_map_dict=EMOTION_NAME2ID)
+    # train_dataset = CustomDataset(train_address, train_labels, transform=train_transform)
+    # val_dataset = CustomDataset(val_address, val_labels, transform=train_transform)
 
-    train_address, train_labels = crawl_directory_dataset(directory + '/train',
-                                                          label_map_dict=EMOTION_NAME2ID)
-    val_address, val_labels = crawl_directory_dataset(directory + '/val', label_map_dict=EMOTION_NAME2ID)
-    train_dataset = CustomDataset(train_address, train_labels, transform=train_transform)
-    val_dataset = CustomDataset(val_address, val_labels, transform=train_transform)
-
-    # train_dataset = datasets.ImageFolder(dataset_dir + '/train', transform=transform_train)
-    # val_dataset = datasets.ImageFolder(dataset_dir + '/val', transform=transform_val)
+    train_dataset = datasets.ImageFolder(directory + '/train', transform=transform_train)
+    val_dataset = datasets.ImageFolder(directory + '/val', transform=transform_val)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, pin_memory=True)

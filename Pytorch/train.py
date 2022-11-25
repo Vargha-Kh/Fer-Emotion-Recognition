@@ -2,6 +2,9 @@ import torch
 from torch.utils.tensorboard import SummaryWriter
 from callback import EarlyStopping, Model_checkpoint, CSV_log
 
+classes = ('angry', 'disgust', 'fear', 'happy',
+           'neutral', 'sad', 'surprise')
+
 
 class Trainer:
     def __init__(self, logdir="./logs", csv_log_dir="./csv_log", model_checkpoint_dir="./model"):
@@ -17,21 +20,18 @@ class Trainer:
         correct_count = 0
         num_image = 0
         for inputs, labels in ds_train:
+            optimizer.zero_grad()
             inputs = inputs.to(device).float()
             labels = labels.type(torch.DoubleTensor).to(device)
             with torch.cuda.amp.autocast():
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
-            optimizer.zero_grad()
-            self.scaler.scale(loss).backward()
-            self.scaler.step(optimizer)
-            self.scaler.update()
+            loss.backward()
+            optimizer.step()
             loss_ += loss.item()
             _, preds = torch.max(outputs, 1)
             correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
             num_image += labels.size(0)
-            # loss.backward()
-            # optimizer.step()
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
 
@@ -42,18 +42,28 @@ class Trainer:
         loss_ = 0
         correct_count = 0
         num_image = 0
+        correct_pred = {classname: 0 for classname in classes}
+        total_pred = {classname: 0 for classname in classes}
         with torch.no_grad():
             for inputs, labels in ds_valid:
                 inputs = inputs.to(device).float()
                 labels = labels.type(torch.DoubleTensor).to(device)
                 outputs = model(inputs)
+                _, predictions = torch.max(outputs, 1)
+                for label, prediction in zip(labels, predictions):
+                    if label == prediction:
+                        correct_pred[classes[label]] += 1
+                    total_pred[classes[label]] += 1
                 loss = criterion(outputs, labels)
                 loss_ += loss.item()
                 _, preds = torch.max(outputs.data, 1)
-                correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
+                correct_count += (preds == labels).sum().item()
                 num_image += labels.size(0)
         acc = 100 * correct_count / num_image
         loss = loss_ / num_image
+        for classname, correct_count in correct_pred.items():
+            accuracy = 100 * float(correct_count) / total_pred[classname]
+            print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         return model, loss, acc
 
     def training(self, model, ds_train, ds_valid, criterion, optimizer, reduce_on_plateau, exp_lr, device, epochs):
