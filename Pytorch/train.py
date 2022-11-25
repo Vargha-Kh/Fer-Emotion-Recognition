@@ -30,7 +30,7 @@ class Trainer:
             optimizer.step()
             num_image += inputs.size(0)
             loss_ += loss.item() * num_image
-            _, num = torch.max(logit, 1)
+            _, num = torch.max(outputs, 1)
             train_acc += torch.sum(num == labels)
 
         total_loss_train = loss_ / num_image
@@ -54,7 +54,7 @@ class Trainer:
                 outputs = model(inputs)
                 loss = criterion(outputs, labels.long())
                 loss_ += loss.item() * num_image
-                Max, num = torch.max(logit, 1)
+                Max, num = torch.max(outputs, 1)
                 valid_acc += torch.sum(num == labels)
                 # _, preds = torch.max(outputs.data, 1)
                 _, predictions = torch.max(outputs, 1)
