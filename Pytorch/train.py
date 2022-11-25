@@ -46,8 +46,8 @@ class Trainer:
         total_pred = {classname: 0 for classname in classes}
         with torch.no_grad():
             for inputs, labels in ds_valid:
-                inputs = inputs.to(device).float()
-                labels = labels.type(torch.DoubleTensor).to(device)
+                inputs = inputs.to(device)
+                labels = labels.to(device)
                 outputs = model(inputs)
                 _, predictions = torch.max(outputs, 1)
                 for label, prediction in zip(labels, predictions):
