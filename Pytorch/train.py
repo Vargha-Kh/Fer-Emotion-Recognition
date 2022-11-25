@@ -26,7 +26,7 @@ class Trainer:
             outputs = model(inputs)
             loss = criterion(outputs.squeeze(1), labels.long())
             num_image += inputs.size(0)
-            loss_ += loss.item() * num_image
+            loss_ += loss.item()
             _, num = torch.max(outputs, 1)
             train_acc += torch.sum(num == labels)
             loss.backward()
@@ -51,7 +51,7 @@ class Trainer:
             num_image += inputs.size(0)
             outputs = model(inputs)
             loss = criterion(outputs.squeeze(1), labels.long())
-            loss_ += loss.item() * num_image
+            loss_ += loss.item()
             Max, num = torch.max(outputs, 1)
             valid_acc += torch.sum(num == labels)
             # _, preds = torch.max(outputs.data, 1)
