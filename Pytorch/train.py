@@ -17,7 +17,7 @@ class Trainer:
     def train(self, ds_train, model, criterion, optimizer, device):
         model.train()
         loss_ = 0
-        correct_count = 0
+        train_acc = 0
         num_image = 0
         for inputs, labels in ds_train:
             optimizer.zero_grad()
@@ -28,18 +28,20 @@ class Trainer:
                 loss = criterion(outputs, labels.long())
             loss.backward()
             optimizer.step()
-            loss_ += loss.item()
-            _, preds = torch.max(outputs, 1)
-            correct_count += (preds == torch.max(labels, dim=1)[1]).sum().item()
-            num_image += labels.size(0)
-        acc = 100 * correct_count / num_image
-        loss = loss_ / num_image
+            num_image += inputs.size(0)
+            loss_ += loss.item() * num_image
+            _, num = torch.max(logit, 1)
+            train_acc += torch.sum(num == labels)
 
-        return model, loss, acc
+        total_loss_train = loss_ / num_image
+        total_acc_train = (train_acc / num_image).item()
+
+        return model, total_loss_train, total_acc_train
 
     def valid(self, ds_valid, model, criterion, device):
         model.eval()
         loss_ = 0
+        valid_acc = 0
         correct_count = 0
         num_image = 0
         correct_pred = {classname: 0 for classname in classes}
@@ -48,23 +50,26 @@ class Trainer:
             for inputs, labels in ds_valid:
                 inputs = inputs.to(device)
                 labels = labels.to(device)
+                num_image += labels.size(0)
                 outputs = model(inputs)
                 loss = criterion(outputs, labels.long())
-                loss_ += loss.item()
-                _, preds = torch.max(outputs.data, 1)
+                loss_ += loss.item() * num_image
+                Max, num = torch.max(logit, 1)
+                valid_acc += torch.sum(num == labels)
+                # _, preds = torch.max(outputs.data, 1)
                 _, predictions = torch.max(outputs, 1)
                 for label, prediction in zip(labels, predictions):
                     if label == prediction:
                         correct_pred[classes[label]] += 1
                     total_pred[classes[label]] += 1
                 correct_count += (preds == labels).sum().item()
-                num_image += labels.size(0)
-        acc = 100 * correct_count / num_image
-        loss = loss_ / num_image
+
+        total_loss_valid = loss_ / num_image
+        total_acc_valid = (valid_acc / num_image).item()
         for classname, correct_count in correct_pred.items():
             accuracy = 100 * float(correct_count) / total_pred[classname]
             print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
-        return model, loss, acc
+        return model, total_loss_valid, total_acc_valid
 
     def training(self, model, ds_train, ds_valid, criterion, optimizer, reduce_on_plateau, exp_lr, device, epochs):
         train_losses = []
