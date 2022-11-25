@@ -83,7 +83,7 @@ class Trainer:
             train_accs.append(total_acc_train)
 
             with torch.no_grad():
-                model, total_loss_valid, total_acc_valid = valid(ds_valid, model, criterion, device)
+                model, total_loss_valid, total_acc_valid = self.valid(ds_valid, model, criterion, device)
                 valid_losses.append(total_loss_valid)
                 valid_accs.append(total_acc_valid)
 
