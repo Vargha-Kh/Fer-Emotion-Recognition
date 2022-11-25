@@ -56,7 +56,7 @@ class Trainer:
                 loss_ += loss.item() * num_image
                 Max, num = torch.max(outputs, 1)
                 valid_acc += torch.sum(num == labels)
-                # _, preds = torch.max(outputs.data, 1)
+                _, preds = torch.max(outputs.data, 1)
                 _, predictions = torch.max(outputs, 1)
                 for label, prediction in zip(labels, predictions):
                     if label == prediction:
