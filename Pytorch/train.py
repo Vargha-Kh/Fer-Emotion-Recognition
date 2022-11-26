@@ -19,16 +19,17 @@ class Trainer:
         train_acc = 0
         num_image = 0
         for inputs, labels in ds_train:
-            optimizer.zero_grad()
+
             num_image += inputs.size(0)
             inputs = inputs.to(device)
             labels = labels.to(device)
             with torch.cuda.amp.autocast():
                 outputs = model(inputs)
                 loss = criterion(outputs, labels)
-            loss_ += loss.item() * num_image
+            loss_ += loss.item() * inputs.size(0)
             _, num = torch.max(outputs.data, 1)
             train_acc += torch.sum(num == labels)
+            optimizer.zero_grad()
             loss.backward()
             optimizer.step()
 
@@ -51,7 +52,7 @@ class Trainer:
             labels = labels.to(device)
             outputs = model(inputs)
             loss = criterion(outputs, labels)
-            loss_ += loss.item() * num_image
+            loss_ += loss.item() * inputs.size(0)
             Max, num = torch.max(outputs, 1)
             valid_acc += torch.sum(num == labels)
             # _, preds = torch.max(outputs.data, 1)
@@ -102,8 +103,11 @@ class Trainer:
 
             Model_checkpoint(path=self.model_checkpoint_dir, metrics=metrics, model=model,
                              monitor='val_acc', verbose=True,
-                             file_name="best.pth")
-            if early_stopping.Early_Stopping(monitor='val_acc', metrics=metrics, patience=30, verbose=True):
+                             file_name=f"best_acc_{total_acc_valid}.pth")
+            Model_checkpoint(path=self.model_checkpoint_dir, metrics=metrics, model=model,
+                             monitor='val_loss', verbose=True,
+                             file_name=f"best_acc_{total_loss_valid}.pth")
+            if early_stopping.Early_Stopping(monitor='val_loss', metrics=metrics, patience=20, verbose=True):
                 break
             print("Epoch:", epoch + 1, "- Train Loss:", total_loss_train, "- Train Accuracy:", total_acc_train,
                   "- Validation Loss:", total_loss_valid, "- Validation Accuracy:", total_acc_valid, "- LR:",
