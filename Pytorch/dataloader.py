@@ -50,8 +50,8 @@ class CustomDataset(Dataset):
 def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
-    mean = [0.5, 0.5, 0.5]
-    std = [0.5, 0.5, 0.5]
+    # mean = [0.5, 0.5, 0.5]
+    # std = [0.5, 0.5, 0.5]
 
     train_transform = A.Compose(
         [
@@ -72,6 +72,8 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     transform_val = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(num_output_channels=3),
+         transforms.RandomHorizontalFlip(),
+         transforms.RandomRotation(0.3),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
 
