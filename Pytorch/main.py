@@ -7,7 +7,6 @@ import FERVT
 import os
 import numpy as np
 from torch.optim import AdamW
-import math
 
 warnings.filterwarnings("ignore")
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -28,7 +27,7 @@ if __name__ == "__main__":
     FER_VT = FERVT.FERVT(device)
 
     # Hyper-parameters
-    wd = 0.1
+    wd = 0.0001
     class_weight = [1.02660468, 9.40661861, 1.00104606, 0.56843877, 0.84912748, 1.29337298, 0.82603942, ]
     class_weights = torch.FloatTensor(np.array(class_weight)).to(device)
     criterion = nn.CrossEntropyLoss()

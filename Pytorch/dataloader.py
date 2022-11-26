@@ -1,17 +1,12 @@
-import torch
-from torchvision import transforms, datasets
-from torch.utils.data import DataLoader
 import albumentations as A
-from albumentations.pytorch import ToTensorV2
-import numpy as np
-from torch.utils.data import Dataset
 import cv2
-import os
-from PIL import Image
-from deep_utils import crawl_directory_dataset
+import torch
 import torch.nn.functional as F
-from torchvision.io import read_image
+from albumentations.pytorch import ToTensorV2
 from skimage import io
+from torch.utils.data import DataLoader
+from torch.utils.data import Dataset
+from torchvision import transforms, datasets
 
 
 class CustomDataset(Dataset):
@@ -76,15 +71,6 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.RandomRotation(0.3),
          transforms.ToTensor(),
          transforms.Normalize(mean, std)])
-
-    # EMOTION_ID2NAME = {0: 'angry', 1: 'disgust', 2: 'fear', 3: 'happy', 4: 'sad', 5: 'surprise', 6: 'neutral'}
-    # EMOTION_NAME2ID = {v: k for k, v in EMOTION_ID2NAME.items()}
-    #
-    # train_address, train_labels = crawl_directory_dataset(directory + '/train',
-    #                                                       label_map_dict=EMOTION_NAME2ID)
-    # val_address, val_labels = crawl_directory_dataset(directory + '/val', label_map_dict=EMOTION_NAME2ID)
-    # train_dataset = CustomDataset(train_address, train_labels, transform=train_transform)
-    # val_dataset = CustomDataset(val_address, val_labels, transform=train_transform)
 
     train_dataset = datasets.ImageFolder(directory + '/train', transform=transform_train)
     val_dataset = datasets.ImageFolder(directory + '/val', transform=transform_val)

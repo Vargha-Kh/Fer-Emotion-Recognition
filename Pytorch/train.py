@@ -23,9 +23,9 @@ class Trainer:
             num_image += inputs.size(0)
             inputs = inputs.to(device)
             labels = labels.to(device)
-            # with torch.cuda.amp.autocast():
-            outputs = model(inputs)
-            loss = criterion(outputs, labels)
+            with torch.cuda.amp.autocast():
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
             loss_ += loss.item() * num_image
             _, num = torch.max(outputs.data, 1)
             train_acc += torch.sum(num == labels)
