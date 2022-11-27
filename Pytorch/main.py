@@ -16,7 +16,7 @@ torch.cuda.empty_cache()
 if __name__ == "__main__":
     num_classes = 7
     augmentation = True
-    batch_size = 256
+    batch_size = 512
     num_epochs = 300
     img_size = 224
 
@@ -27,7 +27,7 @@ if __name__ == "__main__":
     FER_VT = FERVT.FERVT(device)
 
     # Hyper-parameters
-    wd = 0.001
+    wd = 0.01
     class_weight = [1.02660468, 9.40661861, 1.00104606, 0.56843877, 0.84912748, 1.29337298, 0.82603942, ]
     class_weights = torch.FloatTensor(np.array(class_weight)).to(device)
     criterion = nn.CrossEntropyLoss()
