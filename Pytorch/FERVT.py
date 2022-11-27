@@ -21,7 +21,7 @@ class Backbone(nn.Module):
     def __init__(self):
         super(Backbone, self).__init__()
 
-        resnet = torchvision.models.resnet34(pretrained=True)
+        resnet = torchvision.models.resnet18(pretrained=True)
         self.conv1 = resnet.conv1
         self.bn1 = resnet.bn1
         self.relu = resnet.relu
@@ -189,7 +189,7 @@ class VTA(nn.Module):
     def __init__(self):
         super(VTA, self).__init__()
 
-        self.transformer = Transformer(num_layers=10, dim=192, num_heads=8,
+        self.transformer = Transformer(num_layers=12, dim=192, num_heads=8,
                                        ff_dim=768, dropout=0.35)
         self.layernorm = nn.LayerNorm(192)
         self.fc = nn.Linear(192, 7)
