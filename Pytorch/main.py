@@ -27,10 +27,10 @@ if __name__ == "__main__":
     FER_VT = FERVT.FERVT(device)
 
     # Hyper-parameters
-    wd = 0.001
+    wd = 0.00001
     class_weight = [1.02660468, 9.40661861, 1.00104606, 0.56843877, 0.84912748, 1.29337298, 0.82603942, ]
     class_weights = torch.FloatTensor(np.array(class_weight)).to(device)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(class_weights)
     optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
 
     # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer, 200, T_mult=1, eta_min=0.0001,
