@@ -48,16 +48,6 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
     # mean = [0.5, 0.5, 0.5]
     # std = [0.5, 0.5, 0.5]
 
-    train_transform = A.Compose(
-        [
-            A.Resize(height=img_size, width=img_size),
-            A.HorizontalFlip(p=0.5),
-            # A.ToGray(always_apply=True, p=1),
-            # A.ToRGB(always_apply=True, p=1),
-            # A.Normalize(mean=mean, std=std, max_pixel_value=255.0),
-            ToTensorV2()
-        ])
-
     transform_train = transforms.Compose(
         [transforms.Resize((img_size, img_size)),
          transforms.Grayscale(num_output_channels=3),
@@ -74,7 +64,7 @@ def get_dataset(directory="./fer2013", batch_size=128, img_size=48):
          transforms.Normalize(mean, std)])
 
     train_dataset = datasets.ImageFolder(directory + '/train', transform=transform_train)
-    val_dataset = datasets.ImageFolder(directory + '/val', transform=transform_val)
+    val_dataset = datasets.ImageFolder(directory + '/valid', transform=transform_val)
 
     train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
     val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=8)
