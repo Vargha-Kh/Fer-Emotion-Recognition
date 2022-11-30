@@ -190,7 +190,7 @@ class VTA(nn.Module):
         super(VTA, self).__init__()
 
         self.transformer = Transformer(num_layers=12, dim=192, num_heads=8,
-                                       ff_dim=768, dropout=0.25)
+                                       ff_dim=768, dropout=0.35)
         self.layernorm = nn.LayerNorm(192)
         self.fc = nn.Linear(192, 7)
 
