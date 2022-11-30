@@ -35,7 +35,7 @@ class EarlyStopping:
         return early_stop
 
 
-def Model_checkpoint(path, metrics, model, monitor='val_loss', verbose=False, file_name="best.pth"):
+def Model_checkpoint(path, metrics, model, monitor='val_loss', verbose=True, file_name="best.pth"):
     name = os.path.join(path, file_name)
     metric = metrics[monitor]
     if monitor == 'val_loss' or 'train_loss':
@@ -48,8 +48,6 @@ def Model_checkpoint(path, metrics, model, monitor='val_loss', verbose=False, fi
             torch.save(model.state_dict(), name)
             if verbose:
                 print(f"{monitor} of Model Improved in This Epoch")
-        elif verbose:
-            print("Model Did Not Improved in This Epoch")
 
 
 def CSV_log(path, score, filename='csv_log'):
