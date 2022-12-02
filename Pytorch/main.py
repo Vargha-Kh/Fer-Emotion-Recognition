@@ -27,7 +27,7 @@ if __name__ == "__main__":
     FER_VT = FERVT.FERVT(device)
 
     # Hyper-parameters
-    wd = 0.001
+    wd = 0.0001
     criterion = nn.CrossEntropyLoss()
     optimizer = AdamW(FER_VT.parameters(), lr=0.001, weight_decay=wd)
 
