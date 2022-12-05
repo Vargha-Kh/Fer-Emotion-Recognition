@@ -41,7 +41,7 @@ class Backbone(nn.Module):
         self.bntran3 = nn.BatchNorm2d(3)
         # Visual Token Embedding.
         self.layernorm = nn.LayerNorm(192)
-        self.dropout = nn.Dropout(0.15)
+        self.dropout = nn.Dropout(0.1)
         self.line = nn.Linear(192, 192)
         # class token init
         self.class_token = nn.Parameter(torch.zeros(1, 192))
