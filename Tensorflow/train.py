@@ -8,9 +8,10 @@ import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
 
+tf.keras.backend.clear_session()
 devices = tf.config.experimental.list_physical_devices('GPU')
-#tf.config.experimental.set_memory_growth(devices[0], True)
-# tf.keras.backend.clear_session()
+tf.config.experimental.set_memory_growth(devices[0], True)
+
 
 
 def model_evaluation(model, test_gen):
@@ -25,7 +26,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=256,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=64,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
