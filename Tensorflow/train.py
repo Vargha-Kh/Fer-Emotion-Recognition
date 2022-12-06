@@ -8,8 +8,8 @@ import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
 
-# devices = tf.config.experimental.list_physical_devices('GPU')
-# tf.config.experimental.set_memory_growth(devices[0], True)
+devices = tf.config.experimental.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(devices[0], True)
 # tf.keras.backend.clear_session()
 
 
