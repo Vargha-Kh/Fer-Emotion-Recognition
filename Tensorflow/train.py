@@ -47,7 +47,7 @@ def train():
     ]
 
     optimizer = tfa.optimizers.AdamW(
-        learning_rate=hps['learning_rate'], weight_decay=0.001
+        learning_rate=hps['learning_rate'], weight_decay=0.01
     )
 
     model.compile(
