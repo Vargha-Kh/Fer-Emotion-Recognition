@@ -15,7 +15,9 @@ class CustomClassifier:
     def get_model(self) -> Model:
         model = tf.keras.models.Sequential()   
         model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
+        model.add(MaxPooling2D(pool_size=(2, 2)))
         model.add(Dropout(0.25))
         
         model.add(Conv2D(128, kernel_size=(3, 3), activation='relu'))
@@ -25,7 +27,6 @@ class CustomClassifier:
         
         model.add(Flatten())
         model.add(Dense(1024, activation='relu'))
-        model.add(Dense(512, activation='relu'))
         model.add(Dropout(0.15))
         model.add(Dense(7, activation='softmax'))
 
