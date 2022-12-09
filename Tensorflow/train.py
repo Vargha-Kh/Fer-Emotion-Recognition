@@ -1,6 +1,6 @@
 from models import load_model
 from hp import load_hps
-from tensorflow.keras import metrics
+from tensorflow.keras import metrics, optimizers
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, EarlyStopping, TensorBoard
 from datasets.dataset import Dataset
 from plotting import plot
@@ -31,7 +31,7 @@ def model_evaluation(model, test_gen):
 
 
 def train():
-    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=64,
+    hps = load_hps(dataset_dir="./fer2013/", model_name='custom_model', n_epochs=300, batch_size=512,
                    learning_rate=0.001,
                    lr_reducer_factor=0.1,
                    lr_reducer_patience=12, img_size=48, split_size=0.25, framework='keras')
@@ -51,8 +51,8 @@ def train():
         metrics.AUC(name='auc')
     ]
 
-    optimizer = tfa.optimizers.AdamW(
-        learning_rate=hps['learning_rate'], weight_decay=0.01
+    optimizer = optimizers.Adam(
+        learning_rate=hps['learning_rate'], decay=1e-6
     )
 
     model.compile(
