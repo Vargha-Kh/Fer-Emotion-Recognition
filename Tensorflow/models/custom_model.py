@@ -14,7 +14,7 @@ class CustomClassifier:
 
     def get_model(self) -> Model:
         model = tf.keras.models.Sequential()   
-        model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
+        model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,3)))
         model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
         model.add(Dropout(0.1))
         
