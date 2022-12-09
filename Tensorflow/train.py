@@ -7,10 +7,14 @@ from plotting import plot
 import tensorflow_addons as tfa
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import tensorflow as tf
+import os
 
-tf.keras.backend.clear_session()
-devices = tf.config.experimental.list_physical_devices('GPU')
-tf.config.experimental.set_memory_growth(devices[0], True)
+# tf.keras.backend.clear_session()
+# devices = tf.config.experimental.list_physical_devices('GPU')
+# tf.config.experimental.set_memory_growth(devices[0], True)
+
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 
 
